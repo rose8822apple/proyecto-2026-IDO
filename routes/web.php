@@ -1,42 +1,169 @@
 <?php
 
+use App\Http\Controllers\OperationController;
+use App\Models\Availability;
+use App\Models\Person;
+use App\Models\Shift;
+use App\Models\Site;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
     return redirect()->route('dashboard');
 })->name('home');
 
-Route::get('/dashboard', fn () => view('dashboard', ['title' => 'Resumen']))->name('dashboard');
+Route::get('/dashboard', function () {
+    $peopleCount = Person::count();
+    $sitesCount = Site::count();
+    $operationalSites = Site::where('status', 'Operativa')->count();
+    $totalShifts = Shift::count();
+    $averageCoverage = (float) (Site::avg('coverage') ?? Shift::avg('coverage') ?? 0);
+    $recentShifts = Shift::with('site')->orderByDesc('created_at')->limit(4)->get();
+    $alerts = $recentShifts->filter(fn ($shift) => $shift->status !== 'Completo')->values();
 
-$module = function (string $title, string $eyebrow, string $description, string $action, string $panelTitle, array $columns, array $rows) {
-    return view('module', compact('title', 'eyebrow', 'description', 'action', 'panelTitle', 'columns', 'rows'));
-};
+    return view('dashboard', [
+        'title' => 'Resumen',
+        'peopleCount' => $peopleCount,
+        'sitesCount' => $sitesCount,
+        'operationalSites' => $operationalSites,
+        'totalShifts' => $totalShifts,
+        'averageCoverage' => round($averageCoverage, 0),
+        'recentShifts' => $recentShifts,
+        'alerts' => $alerts,
+    ]);
+})->name('dashboard');
 
-Route::get('/turnos', fn () => $module('Turnos', 'GESTIÓN DE TURNOS', 'Organiza la cobertura de hospitales y refugios sin perder de vista los descansos.', 'Crear turno', 'Turnos programados', ['Turno', 'Sede', 'Horario', 'Cobertura', 'Estado'], [
-    ['<strong>Triaje general</strong><small class="table-subtext">Médicos y enfermería</small>', 'Hospital San Gabriel', '08:00 - 14:00', '<span class="coverage-bar"><i style="width:100%"></i></span> 5/5', '<span class="tag tag-red">En curso</span>'],
-    ['<strong>Atención primaria</strong><small class="table-subtext">Equipo mixto</small>', 'Refugio La Esperanza', '10:30 - 16:30', '<span class="coverage-bar"><i style="width:100%"></i></span> 6/6', '<span class="tag tag-green">Completo</span>'],
-    ['<strong>Triaje pediátrico</strong><small class="table-subtext">Pediatría y apoyo</small>', 'Hospital San Gabriel', '14:00 - 18:00', '<span class="coverage-bar warning"><i style="width:75%"></i></span> 3/4', '<span class="tag tag-yellow">1 vacante</span>'],
-]))->name('shifts');
+Route::get('/turnos', function () {
+    $rows = Shift::with('site')->orderBy('start_time')->get()->map(function ($shift) {
+        return [
+            '<strong>' . e($shift->title) . '</strong><small class="table-subtext">Equipo de cobertura</small>',
+            $shift->site?->name ?? 'Sin sede',
+            $shift->start_time . ' - ' . $shift->end_time,
+            '<span class="coverage-bar"><i style="width:' . $shift->coverage . '%"></i></span> ' . $shift->coverage . '%',
+            '<span class="tag ' . ($shift->status === 'Completo' ? 'tag-green' : ($shift->status === 'En curso' ? 'tag-red' : 'tag-yellow')) . '">' . e($shift->status) . '</span>',
+            '<div class="table-actions"><a class="btn btn-secondary btn-small" href="' . route('shifts.edit', $shift) . '">Editar</a><form action="' . route('shifts.destroy', $shift) . '" method="POST" onsubmit="return confirm(\'¿Eliminar este turno?\');" style="display:inline;">' . csrf_field() . method_field('DELETE') . '<button type="submit" class="btn btn-danger btn-small">Eliminar</button></form></div>',
+        ];
+    })->toArray();
 
-Route::get('/personal', fn () => $module('Personal', 'EQUIPO HUMANO', 'Consulta perfiles, roles, disponibilidad declarada y horas de descanso.', 'Añadir persona', 'Personal registrado', ['Persona', 'Rol', 'Disponibilidad', 'Próximo turno', 'Estado'], [
-    ['<strong>Ana Castillo</strong><small class="table-subtext">ana.castillo@redsalud.org</small>', '<span class="role-chip doctor">Médica</span>', 'Hoy · 08:00 - 18:00', 'Triaje general', '<span class="tag tag-green">Disponible</span>'],
-    ['<strong>Luis Méndez</strong><small class="table-subtext">luis.mendez@redsalud.org</small>', '<span class="role-chip nurse">Enfermero</span>', 'Hoy · 08:00 - 16:00', 'Atención primaria', '<span class="tag tag-red">En turno</span>'],
-    ['<strong>Carla Molina</strong><small class="table-subtext">carla.molina@redsalud.org</small>', '<span class="role-chip volunteer">Voluntaria</span>', 'Mañana · 10:00 - 20:00', 'Refugio La Esperanza', '<span class="tag tag-green">Disponible</span>'],
-]))->name('people');
+    return view('module', [
+        'title' => 'Turnos',
+        'eyebrow' => 'GESTIÓN DE TURNOS',
+        'description' => 'Organiza la cobertura de hospitales y refugios sin perder de vista los descansos.',
+        'action' => 'Crear turno',
+        'actionRoute' => 'shifts.create',
+        'panelTitle' => 'Turnos programados',
+        'columns' => ['Turno', 'Sede', 'Horario', 'Cobertura', 'Estado', 'Acciones'],
+        'rows' => $rows,
+    ]);
+})->name('shifts');
+Route::get('/turnos/crear', [OperationController::class, 'createShift'])->name('shifts.create');
+Route::get('/turnos/{shift}/editar', [OperationController::class, 'editShift'])->name('shifts.edit');
+Route::post('/turnos', [OperationController::class, 'storeShift'])->name('shifts.store');
+Route::put('/turnos/{shift}', [OperationController::class, 'updateShift'])->name('shifts.update');
+Route::delete('/turnos/{shift}', [OperationController::class, 'destroyShift'])->name('shifts.destroy');
 
-Route::get('/sedes', fn () => $module('Sedes activas', 'RED OPERATIVA', 'Hospitales y refugios disponibles para recibir equipos de atención.', 'Registrar sede', 'Sedes de la red', ['Sede', 'Tipo', 'Municipio', 'Cobertura', 'Estado'], [
-    ['<strong>Hospital San Gabriel</strong><small class="table-subtext">HSG-001</small>', '<span class="role-chip hospital">Hospital</span>', 'San Miguel', '<span class="coverage-bar"><i style="width:95%"></i></span> 95%', '<span class="tag tag-green">Operativa</span>'],
-    ['<strong>Refugio La Esperanza</strong><small class="table-subtext">RLE-014</small>', '<span class="role-chip shelter">Refugio</span>', 'San Miguel', '<span class="coverage-bar warning"><i style="width:88%"></i></span> 88%', '<span class="tag tag-green">Operativa</span>'],
-    ['<strong>Refugio Los Pinos</strong><small class="table-subtext">RLP-022</small>', '<span class="role-chip shelter">Refugio</span>', 'Santa Elena', '<span class="coverage-bar"><i style="width:100%"></i></span> 100%', '<span class="tag tag-green">Operativa</span>'],
-]))->name('sites');
+Route::get('/personal', function () {
+    $rows = Person::orderBy('name')->get()->map(function ($person) {
+        $roleClass = match (strtolower($person->role)) {
+            'médica', 'medica', 'doctor', 'doctora' => 'doctor',
+            'enfermero', 'enfermera', 'nurse' => 'nurse',
+            default => 'volunteer',
+        };
 
-Route::get('/disponibilidad', fn () => $module('Disponibilidad', 'PLANIFICACIÓN', 'Revisa las ventanas disponibles y protege los tiempos de descanso del equipo.', 'Registrar disponibilidad', 'Disponibilidad declarada', ['Persona', 'Lun 23', 'Mar 24', 'Mié 25', 'Descanso mínimo'], [
-    ['<strong>Ana Castillo</strong><small class="table-subtext">Médica</small>', '<span class="availability available">Disponible</span>', '<span class="availability available">Disponible</span>', '<span class="availability partial">09:00 - 18:00</span>', '12 horas'],
-    ['<strong>Luis Méndez</strong><small class="table-subtext">Enfermero</small>', '<span class="availability assigned">Asignado</span>', '<span class="availability assigned">Asignado</span>', '<span class="availability available">Disponible</span>', '12 horas'],
-    ['<strong>Carla Molina</strong><small class="table-subtext">Voluntaria</small>', '<span class="availability unavailable">No disponible</span>', '<span class="availability available">Disponible</span>', '<span class="availability available">Disponible</span>', '8 horas'],
-]))->name('availability');
+        return [
+            '<strong>' . e($person->name) . '</strong><small class="table-subtext">' . e($person->email) . '</small>',
+            '<span class="role-chip ' . $roleClass . '">' . e($person->role) . '</span>',
+            $person->status,
+            'Próximo turno',
+            '<span class="tag ' . ($person->status === 'Disponible' ? 'tag-green' : ($person->status === 'En turno' ? 'tag-red' : 'tag-yellow')) . '">' . e($person->status) . '</span>',
+            '<div class="table-actions"><a class="btn btn-secondary btn-small" href="' . route('people.edit', $person) . '">Editar</a><form action="' . route('people.destroy', $person) . '" method="POST" onsubmit="return confirm(\'¿Eliminar esta persona?\');" style="display:inline;">' . csrf_field() . method_field('DELETE') . '<button type="submit" class="btn btn-danger btn-small">Eliminar</button></form></div>',
+        ];
+    })->toArray();
 
-Route::get('/configuracion', fn () => $module('Configuración', 'AJUSTES DEL SISTEMA', 'Parámetros generales para la coordinación de la red.', 'Nuevo parámetro', 'Reglas operativas', ['Regla', 'Descripción', 'Valor', 'Estado'], [
-    ['<strong>Descanso mínimo</strong>', 'Horas entre turnos consecutivos', '12 horas', '<span class="tag tag-green">Activo</span>'],
-    ['<strong>Cobertura mínima</strong>', 'Personal requerido por turno', '80%', '<span class="tag tag-green">Activo</span>'],
+    return view('module', [
+        'title' => 'Personal',
+        'eyebrow' => 'EQUIPO HUMANO',
+        'description' => 'Consulta perfiles, roles, disponibilidad declarada y horas de descanso.',
+        'action' => 'Añadir persona',
+        'actionRoute' => 'people.create',
+        'panelTitle' => 'Personal registrado',
+        'columns' => ['Persona', 'Rol', 'Disponibilidad', 'Próximo turno', 'Estado', 'Acciones'],
+        'rows' => $rows,
+    ]);
+})->name('people');
+Route::get('/personal/nuevo', [OperationController::class, 'createPerson'])->name('people.create');
+Route::get('/personal/{person}/editar', [OperationController::class, 'editPerson'])->name('people.edit');
+Route::post('/personal', [OperationController::class, 'storePerson'])->name('people.store');
+Route::put('/personal/{person}', [OperationController::class, 'updatePerson'])->name('people.update');
+Route::delete('/personal/{person}', [OperationController::class, 'destroyPerson'])->name('people.destroy');
+
+Route::get('/sedes', function () {
+    $rows = Site::orderBy('name')->get()->map(function ($site) {
+        return [
+            '<strong>' . e($site->name) . '</strong><small class="table-subtext">' . e($site->type) . '</small>',
+            '<span class="role-chip ' . ($site->type === 'Hospital' ? 'hospital' : 'shelter') . '">' . e($site->type) . '</span>',
+            $site->municipality,
+            '<span class="coverage-bar"><i style="width:' . $site->coverage . '%"></i></span> ' . $site->coverage . '%',
+            '<span class="tag ' . ($site->status === 'Operativa' ? 'tag-green' : ($site->status === 'En revisión' ? 'tag-yellow' : 'tag-red')) . '">' . e($site->status) . '</span>',
+            '<div class="table-actions"><a class="btn btn-secondary btn-small" href="' . route('sites.edit', $site) . '">Editar</a><form action="' . route('sites.destroy', $site) . '" method="POST" onsubmit="return confirm(\'¿Eliminar esta sede?\');" style="display:inline;">' . csrf_field() . method_field('DELETE') . '<button type="submit" class="btn btn-danger btn-small">Eliminar</button></form></div>',
+        ];
+    })->toArray();
+
+    return view('module', [
+        'title' => 'Sedes activas',
+        'eyebrow' => 'RED OPERATIVA',
+        'description' => 'Hospitales y refugios disponibles para recibir equipos de atención.',
+        'action' => 'Registrar sede',
+        'actionRoute' => 'sites.create',
+        'panelTitle' => 'Sedes de la red',
+        'columns' => ['Sede', 'Tipo', 'Municipio', 'Cobertura', 'Estado', 'Acciones'],
+        'rows' => $rows,
+    ]);
+})->name('sites');
+Route::get('/sedes/nueva', [OperationController::class, 'createSite'])->name('sites.create');
+Route::get('/sedes/{site}/editar', [OperationController::class, 'editSite'])->name('sites.edit');
+Route::post('/sedes', [OperationController::class, 'storeSite'])->name('sites.store');
+Route::put('/sedes/{site}', [OperationController::class, 'updateSite'])->name('sites.update');
+Route::delete('/sedes/{site}', [OperationController::class, 'destroySite'])->name('sites.destroy');
+
+Route::get('/disponibilidad', function () {
+    $rows = Availability::with('person')->orderBy('date')->get()->map(function ($availability) {
+        return [
+            '<strong>' . e($availability->person?->name ?? 'Sin persona') . '</strong><small class="table-subtext">' . e($availability->status) . '</small>',
+            $availability->date,
+            $availability->start_time . ' - ' . $availability->end_time,
+            '<span class="availability ' . ($availability->status === 'Disponible' ? 'available' : ($availability->status === 'Asignado' ? 'assigned' : 'unavailable')) . '">' . e($availability->status) . '</span>',
+            'Descanso mínimo',
+            '<div class="table-actions"><a class="btn btn-secondary btn-small" href="' . route('availability.edit', $availability) . '">Editar</a><form action="' . route('availability.destroy', $availability) . '" method="POST" onsubmit="return confirm(\'¿Eliminar esta disponibilidad?\');" style="display:inline;">' . csrf_field() . method_field('DELETE') . '<button type="submit" class="btn btn-danger btn-small">Eliminar</button></form></div>',
+        ];
+    })->toArray();
+
+    return view('module', [
+        'title' => 'Disponibilidad',
+        'eyebrow' => 'PLANIFICACIÓN',
+        'description' => 'Revisa las ventanas disponibles y protege los tiempos de descanso del equipo.',
+        'action' => 'Registrar disponibilidad',
+        'actionRoute' => 'availability.create',
+        'panelTitle' => 'Disponibilidad declarada',
+        'columns' => ['Persona', 'Fecha', 'Horario', 'Estado', 'Descanso mínimo', 'Acciones'],
+        'rows' => $rows,
+    ]);
+})->name('availability');
+Route::get('/disponibilidad/nueva', [OperationController::class, 'createAvailability'])->name('availability.create');
+Route::get('/disponibilidad/{availability}/editar', [OperationController::class, 'editAvailability'])->name('availability.edit');
+Route::post('/disponibilidad', [OperationController::class, 'storeAvailability'])->name('availability.store');
+Route::put('/disponibilidad/{availability}', [OperationController::class, 'updateAvailability'])->name('availability.update');
+Route::delete('/disponibilidad/{availability}', [OperationController::class, 'destroyAvailability'])->name('availability.destroy');
+
+Route::get('/configuracion', fn () => view('module', [
+    'title' => 'Configuración',
+    'eyebrow' => 'AJUSTES DEL SISTEMA',
+    'description' => 'Parámetros generales para la coordinación de la red.',
+    'action' => 'Nuevo parámetro',
+    'actionRoute' => 'settings',
+    'panelTitle' => 'Reglas operativas',
+    'columns' => ['Regla', 'Descripción', 'Valor', 'Estado'],
+    'rows' => [
+        ['<strong>Descanso mínimo</strong>', 'Horas entre turnos consecutivos', '12 horas', '<span class="tag tag-green">Activo</span>'],
+        ['<strong>Cobertura mínima</strong>', 'Personal requerido por turno', '80%', '<span class="tag tag-green">Activo</span>'],
+    ],
 ]))->name('settings');

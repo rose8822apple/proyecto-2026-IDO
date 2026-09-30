@@ -8,9 +8,10 @@
     <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
-    @vite(['resources/css/app.css'])
+    @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
 <body>
+<div id="toast-container" class="toast-container" aria-live="polite" aria-atomic="true"></div>
 <div class="app-shell">
     <aside class="sidebar">
         <a class="brand" href="{{ route('dashboard') }}"><span class="brand-mark"><i class="bi bi-plus-lg"></i></span><span>Red<span class="brand-accent">Salud</span></span></a>

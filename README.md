@@ -57,3 +57,48 @@ If you discover a security vulnerability within Laravel, please send an e-mail t
 ## License
 
 The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+
+## Red de Atención
+
+Aplicación Laravel 12 para administrar personal, sedes, turnos y disponibilidad de una red de atención. Los módulos operativos guardan sus registros en MySQL; el resumen obtiene sus métricas de esos registros.
+
+### Requisitos
+
+- PHP 8.2 o posterior, Composer y Node.js/npm.
+- MySQL disponible; en Windows se puede usar MySQL desde XAMPP.
+
+### Configuración local
+
+1. Instala dependencias con `composer install` y `npm install`.
+2. Copia `.env.example` como `.env` y genera la clave con `php artisan key:generate`.
+3. Configura `DB_CONNECTION=mysql`, `DB_HOST`, `DB_PORT`, `DB_DATABASE`, `DB_USERNAME` y `DB_PASSWORD` en `.env`.
+4. En una base de datos nueva, ejecuta `php artisan migrate` para crear las tablas del proyecto. Si conectas una base existente, revisa primero las tablas y el historial de migraciones; no vuelvas a crear tablas que ya existan. La tabla `roles` debe tener una columna `nombre`; el selector consulta sus registros y no mantiene una lista estática.
+5. Inicia el servidor con `php artisan serve` y Vite, en otra terminal, con `npm run dev`. Abre `http://127.0.0.1:8000`.
+
+En XAMPP, si PHP no está en el `PATH`, ejecuta los comandos Artisan con `C:\xampp\php\php.exe`. Si la base de datos usa otra estructura existente, respalda la base y verifica las migraciones antes de ejecutarlas.
+
+### Funciones implementadas
+
+- Resumen con conteos, cobertura media y turnos recientes calculados desde la base de datos.
+- CRUD de personal, sedes, turnos y disponibilidad: listados, formularios de alta/edición y eliminación.
+- Selector de rol cargado en cada formulario desde `roles.nombre`; la validación del servidor rechaza roles que no estén en esa tabla.
+- Selectores de sede y personal alimentados con registros existentes.
+- Validación de campos requeridos, correo único, referencias existentes, horarios y cobertura entre 0 y 100.
+- Formularios con mensajes de validación y controles de entrada para valores numéricos.
+- Pruebas de integración para formularios, validación de cobertura y operaciones CRUD.
+
+La pantalla Configuración y algunas etiquetas informativas de los listados todavía contienen valores estáticos; no representan parámetros persistidos en MySQL.
+
+### Pruebas
+
+```powershell
+C:\xampp\php\php.exe artisan test
+```
+
+O, si PHP está en el `PATH`:
+
+```sh
+php artisan test
+```
+
+El historial de cambios funcionales está en [CHANGELOG.md](CHANGELOG.md).
