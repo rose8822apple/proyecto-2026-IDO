@@ -18,6 +18,7 @@ class Shift extends Model
         'coverage',
         'status',
         'date',
+        'end_date',
         'team_description',
         'required_people',
     ];

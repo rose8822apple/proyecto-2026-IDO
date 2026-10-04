@@ -122,7 +122,8 @@ Route::get('/turnos', function () {
         return [
             '<strong>' . e($shift->title) . '</strong><small class="table-subtext">Turno programado</small>',
             $shift->site?->name ?? 'Sin sede',
-            $shift->date ?? 'Sin fecha',
+            ($shift->date ?? 'Sin fecha')
+                .($shift->end_date && $shift->end_date !== $shift->date ? ' al '.$shift->end_date : ''),
             $shift->start_time . ' - ' . $shift->end_time,
             '<span class="tag ' . ($shift->status === 'Completo' ? 'tag-green' : ($shift->status === 'En curso' ? 'tag-red' : 'tag-yellow')) . '">' . e($shift->status) . '</span>',
             '<div class="table-actions"><a class="btn btn-secondary btn-small" href="' . route('shifts.edit', $shift) . '">Editar</a><form action="' . route('shifts.destroy', $shift) . '" method="POST" onsubmit="return confirm(\'¿Eliminar este turno?\');" style="display:inline;">' . csrf_field() . method_field('DELETE') . '<button type="submit" class="btn btn-danger btn-small">Eliminar</button></form></div>',
@@ -157,7 +158,7 @@ Route::get('/personal', function () {
         $status = $person->availabilities()->latest('updated_at')->value('status') ?? $person->status ?? 'Sin disponibilidad';
 
         return [
-            '<strong>' . e($person->name) . '</strong><small class="table-subtext">' . e($person->email) . '</small>',
+            '<strong data-search-cedula="' . e(preg_replace('/\D+/', '', (string) $person->cedula)) . '">' . e($person->name) . '</strong><small class="table-subtext">' . e($person->email) . '</small>',
             '<span class="role-chip ' . $roleClass . '">' . e($person->role) . '</span>',
             $status,
             'Próximo turno',

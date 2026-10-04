@@ -85,10 +85,13 @@ class OperationController extends Controller
         return Shift::query()
             ->with('site')
             ->orderBy('date')
+            ->orderBy('end_date')
             ->orderBy('start_time')
             ->get()
             ->mapWithKeys(fn (Shift $shift) => [
-                $shift->id => ($shift->date ?? 'Sin fecha').' | '.$shift->title.' | '.($shift->site?->name ?? 'Sin sede').' | '.substr($shift->start_time, 0, 5).' - '.substr($shift->end_time, 0, 5),
+                $shift->id => ($shift->date ?? 'Sin fecha')
+                    .($shift->end_date && $shift->end_date !== $shift->date ? ' al '.$shift->end_date : '')
+                    .' | '.$shift->title.' | '.($shift->site?->name ?? 'Sin sede').' | '.substr($shift->start_time, 0, 5).' - '.substr($shift->end_time, 0, 5),
             ])
             ->all();
     }
@@ -190,13 +193,14 @@ class OperationController extends Controller
 
         return view('operations.create', [
             'title' => 'Crear turno',
-            'description' => 'Programa un turno con la sede, la fecha y el horario requerido.',
+            'description' => 'Programa un turno con la sede, el rango de fechas y el horario requerido.',
             'action' => route('shifts.store'),
             'submitText' => 'Guardar turno',
             'fields' => $this->buildFields([
                 ['name' => 'title', 'label' => 'Nombre del turno', 'type' => 'text', 'placeholder' => 'Triaje general', 'required' => true],
                 ['name' => 'site_id', 'label' => 'Sede', 'type' => 'select', 'options' => $sites, 'required' => true],
-                ['name' => 'date', 'label' => 'Fecha', 'type' => 'date', 'required' => true],
+                ['name' => 'date', 'label' => 'Fecha de inicio', 'type' => 'date', 'required' => true],
+                ['name' => 'end_date', 'label' => 'Fecha de fin', 'type' => 'date', 'required' => true],
                 ['name' => 'start_time', 'label' => 'Hora de inicio', 'type' => 'time', 'required' => true],
                 ['name' => 'end_time', 'label' => 'Hora de fin', 'type' => 'time', 'required' => true],
                 ['name' => 'status', 'label' => 'Estado', 'type' => 'select', 'options' => ['En curso' => 'En curso', 'Completo' => 'Completo', '1 vacante' => '1 vacante', 'Vacantes' => 'Vacantes', 'Cancelado' => 'Cancelado'], 'required' => true],
@@ -210,14 +214,15 @@ class OperationController extends Controller
 
         return view('operations.create', [
             'title' => 'Editar turno',
-            'description' => 'Actualiza la programación, la fecha y el horario del turno.',
+            'description' => 'Actualiza la programación, el rango de fechas y el horario del turno.',
             'action' => route('shifts.update', $shift),
             'submitText' => 'Actualizar turno',
             'method' => 'PUT',
             'fields' => $this->buildFields([
                 ['name' => 'title', 'label' => 'Nombre del turno', 'type' => 'text', 'placeholder' => 'Triaje general', 'required' => true],
                 ['name' => 'site_id', 'label' => 'Sede', 'type' => 'select', 'options' => $sites, 'required' => true],
-                ['name' => 'date', 'label' => 'Fecha', 'type' => 'date', 'required' => true],
+                ['name' => 'date', 'label' => 'Fecha de inicio', 'type' => 'date', 'required' => true],
+                ['name' => 'end_date', 'label' => 'Fecha de fin', 'type' => 'date', 'required' => true],
                 ['name' => 'start_time', 'label' => 'Hora de inicio', 'type' => 'time', 'required' => true],
                 ['name' => 'end_time', 'label' => 'Hora de fin', 'type' => 'time', 'required' => true],
                 ['name' => 'status', 'label' => 'Estado', 'type' => 'select', 'options' => ['En curso' => 'En curso', 'Completo' => 'Completo', '1 vacante' => '1 vacante', 'Vacantes' => 'Vacantes', 'Cancelado' => 'Cancelado'], 'required' => true],
@@ -230,13 +235,12 @@ class OperationController extends Controller
         $validated = $request->validate([
             'title' => ['required', 'string', 'max:255'],
             'site_id' => ['required', 'integer', 'exists:sites,id'],
-            'date' => ['nullable', 'date'],
+            'date' => ['required', 'date'],
+            'end_date' => ['required', 'date', 'after_or_equal:date'],
             'start_time' => ['required', 'date_format:H:i'],
             'end_time' => ['required', 'date_format:H:i'],
             'status' => ['required', 'string', 'max:50'],
         ]);
-
-        $validated['date'] ??= now()->toDateString();
 
         DB::transaction(function () use ($validated): void {
             $shift = Shift::create($validated);
@@ -251,13 +255,12 @@ class OperationController extends Controller
         $validated = $request->validate([
             'title' => ['required', 'string', 'max:255'],
             'site_id' => ['required', 'integer', 'exists:sites,id'],
-            'date' => ['nullable', 'date'],
+            'date' => ['required', 'date'],
+            'end_date' => ['required', 'date', 'after_or_equal:date'],
             'start_time' => ['required', 'date_format:H:i'],
             'end_time' => ['required', 'date_format:H:i'],
             'status' => ['required', 'string', 'max:50'],
         ]);
-
-        $validated['date'] ??= $shift->date ?? now()->toDateString();
 
         DB::transaction(function () use ($shift, $validated): void {
             $before = $shift->getAttributes();
@@ -375,7 +378,7 @@ class OperationController extends Controller
             'fields' => $this->buildFields([
                 ['name' => 'person_id', 'label' => 'Persona', 'type' => 'select', 'options' => $people, 'required' => true],
                 ['name' => 'shift_id', 'label' => 'Turno', 'type' => 'select', 'options' => $shifts, 'required' => true],
-                ['name' => 'status', 'label' => 'Estado', 'type' => 'select', 'options' => ['Disponible' => 'Disponible', 'Asignado' => 'Asignado', 'No disponible' => 'No disponible', 'Horario específico' => 'Horario específico'], 'required' => true],
+                ['name' => 'status', 'label' => 'Estado', 'type' => 'select', 'options' => ['Disponible' => 'Disponible', 'No disponible' => 'No disponible', 'Horario específico' => 'Horario específico'], 'required' => true],
             ]),
         ]);
     }
@@ -394,7 +397,7 @@ class OperationController extends Controller
             'fields' => $this->buildFields([
                 ['name' => 'person_id', 'label' => 'Persona', 'type' => 'select', 'options' => $people, 'required' => true],
                 ['name' => 'shift_id', 'label' => 'Turno', 'type' => 'select', 'options' => $shifts, 'required' => true],
-                ['name' => 'status', 'label' => 'Estado', 'type' => 'select', 'options' => ['Disponible' => 'Disponible', 'Asignado' => 'Asignado', 'No disponible' => 'No disponible', 'Horario específico' => 'Horario específico'], 'required' => true],
+                ['name' => 'status', 'label' => 'Estado', 'type' => 'select', 'options' => ['Disponible' => 'Disponible', 'No disponible' => 'No disponible', 'Horario específico' => 'Horario específico'], 'required' => true],
             ], $availability),
         ]);
     }

@@ -17,7 +17,7 @@
             </div>
         </div>
 
-        <form method="GET" action="{{ route('audit') }}" class="audit-filters">
+        <form method="GET" action="{{ route('audit') }}" class="audit-filters" data-audit-filters>
             <div class="audit-filter-grid">
                 <div class="form-group">
                     <label for="q">Buscar</label>

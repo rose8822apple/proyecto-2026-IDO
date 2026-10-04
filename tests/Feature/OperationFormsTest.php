@@ -83,6 +83,8 @@ class OperationFormsTest extends TestCase
         $this->post('/turnos', [
             'title' => 'Triaje general',
             'site_id' => $site->id,
+            'date' => '2026-10-01',
+            'end_date' => '2026-10-01',
             'start_time' => '08:00',
             'end_time' => '14:00',
             'status' => 'En curso',
@@ -92,10 +94,92 @@ class OperationFormsTest extends TestCase
         $this->assertDatabaseHas('shifts', ['site_id' => $site->id, 'coverage' => 0]);
 
         $this->get('/turnos/crear')->assertOk()->assertDontSee('Cobertura');
+        $this->get('/turnos/crear')
+            ->assertSee('<label for="date">Fecha de inicio</label>', false)
+            ->assertSee('<label for="end_date">Fecha de fin</label>', false);
         $this->get('/sedes/nueva')->assertOk()->assertDontSee('Cobertura');
         $this->get('/turnos')->assertOk()->assertDontSee('Cobertura');
-        $this->get('/sedes')->assertOk()->assertDontSee('Cobertura');
+        $this->get('/sedes')->assertOk()->assertDontSee('Cobertura')->assertSee('data-status-column', false);
         $this->get('/dashboard')->assertOk()->assertDontSee('Turnos creados');
+    }
+
+    public function test_people_list_includes_cedula_search_and_status_filter_without_export_control(): void
+    {
+        Person::query()->create([
+            'name' => 'Ana García',
+            'email' => 'ana@example.com',
+            'cedula' => 'V-0123456789',
+            'role' => 'Médico',
+            'phone' => '04261234567',
+            'status' => 'Disponible',
+        ]);
+
+        $this->get('/personal')
+            ->assertOk()
+            ->assertSee('data-search-cedula="0123456789"', false)
+            ->assertSee('Filtrar')
+            ->assertDontSee('Exportar');
+    }
+
+    public function test_availability_status_selector_does_not_offer_assigned(): void
+    {
+        $this->get('/disponibilidad/nueva')
+            ->assertOk()
+            ->assertSee('Disponible')
+            ->assertSee('No disponible')
+            ->assertSee('Horario específico')
+            ->assertDontSee('Asignado');
+    }
+
+    public function test_shift_can_be_created_with_a_date_range_and_end_must_not_precede_start(): void
+    {
+        $site = Site::query()->create([
+            'name' => 'Hospital Central',
+            'type' => 'Hospital',
+            'municipality' => 'San Miguel',
+            'status' => 'Operativa',
+        ]);
+
+        $this->post('/turnos', [
+            'title' => 'Jornada extendida',
+            'site_id' => $site->id,
+            'date' => '2026-10-05',
+            'end_date' => '2026-10-08',
+            'start_time' => '08:00',
+            'end_time' => '16:00',
+            'status' => 'En curso',
+        ])->assertRedirect('/turnos');
+
+        $shift = Shift::query()->where('title', 'Jornada extendida')->firstOrFail();
+        $this->assertSame('2026-10-05', $shift->date);
+        $this->assertSame('2026-10-08', $shift->end_date);
+
+        $this->get('/turnos')
+            ->assertOk()
+            ->assertSee('2026-10-05 al 2026-10-08');
+        $this->get('/disponibilidad/nueva')
+            ->assertOk()
+            ->assertSee('2026-10-05 al 2026-10-08 | Jornada extendida');
+
+        $this->from('/turnos/crear')->post('/turnos', [
+            'title' => 'Fechas incorrectas',
+            'site_id' => $site->id,
+            'date' => '2026-10-08',
+            'end_date' => '2026-10-05',
+            'start_time' => '08:00',
+            'end_time' => '16:00',
+            'status' => 'En curso',
+        ])->assertSessionHasErrors('end_date');
+
+        $this->assertDatabaseMissing('shifts', ['title' => 'Fechas incorrectas']);
+    }
+
+    public function test_audit_view_has_an_explicit_filter_button(): void
+    {
+        $this->get('/auditoria')
+            ->assertOk()
+            ->assertSee('data-audit-filters', false)
+            ->assertSee('Filtrar</button>', false);
     }
 
     public function test_operations_can_store_records_in_database(): void
@@ -133,6 +217,8 @@ class OperationFormsTest extends TestCase
         $this->post('/turnos', [
             'title' => 'Triaje general',
             'site_id' => 1,
+            'date' => '2026-10-01',
+            'end_date' => '2026-10-01',
             'start_time' => '08:00',
             'end_time' => '14:00',
             'status' => 'En curso',
@@ -774,12 +860,14 @@ class OperationFormsTest extends TestCase
         $this->put('/turnos/'.$shift->id, [
             'title' => 'Turno actualizado',
             'site_id' => $site->id,
+            'date' => '2026-10-01',
+            'end_date' => '2026-10-02',
             'start_time' => '09:00',
             'end_time' => '15:00',
             'status' => 'Completo',
         ])->assertRedirect('/turnos');
 
-        $this->assertDatabaseHas('shifts', ['id' => $shift->id, 'title' => 'Turno actualizado', 'coverage' => 100]);
+        $this->assertDatabaseHas('shifts', ['id' => $shift->id, 'title' => 'Turno actualizado', 'coverage' => 100, 'date' => '2026-10-01', 'end_date' => '2026-10-02']);
 
         $this->put('/disponibilidad/'.$availability->id, [
             'person_id' => $person->id,

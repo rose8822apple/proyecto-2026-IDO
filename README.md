@@ -92,11 +92,11 @@ En XAMPP, si PHP no está en el `PATH`, ejecuta los comandos Artisan con `C:\xam
 ### Resumen de vistas
 
 - **Resumen (`/dashboard`)**: muestra el total de turnos, personas y sedes, agrupa personal y sedes por estado, y presenta alertas operativas con enlaces para revisar turnos o gestionar disponibilidad.
-- **Turnos (`/turnos`)**: lista cada turno con su sede, fecha, horario y estado. Permite buscar, filtrar, exportar y acceder a las acciones de alta, edición y eliminación. La fecha forma parte del turno.
-- **Personal (`/personal`)**: muestra personas, roles y su estado de disponibilidad más reciente. Permite buscar, filtrar, exportar y administrar los registros. La disponibilidad se administra desde su propio módulo.
-- **Sedes activas (`/sedes`)**: presenta sedes, tipo, municipio y estado operativo, con opciones para buscar, filtrar, exportar, registrar, editar y eliminar.
-- **Disponibilidad (`/disponibilidad`)**: relaciona personas con turnos y su estado de disponibilidad. La fecha y el horario se obtienen del turno seleccionado; los cambios se reflejan también en Personal y Resumen.
-- **Auditoría (`/auditoria`)**: consulta de solo lectura de cambios, con filtros por módulo, acción, intervalo de fechas y búsqueda. Muestra quién realizó el cambio y los valores anteriores y nuevos disponibles.
+- **Turnos (`/turnos`)**: lista cada turno con su sede, rango de fecha de inicio/fin, horario y estado. Permite buscar, filtrar por estado y acceder a las acciones de alta, edición y eliminación. La fecha forma parte del turno.
+- **Personal (`/personal`)**: muestra personas, roles y su estado de disponibilidad más reciente. Permite buscar por datos visibles o cédula, filtrar por disponibilidad y administrar los registros. La disponibilidad se administra desde su propio módulo.
+- **Sedes activas (`/sedes`)**: presenta sedes, tipo, municipio y estado operativo, con opciones para buscar, filtrar por estado, registrar, editar y eliminar.
+- **Disponibilidad (`/disponibilidad`)**: relaciona personas con turnos y su estado de disponibilidad. Permite buscar y filtrar por estado. La disponibilidad toma la fecha de inicio y el horario del turno seleccionado; los cambios se reflejan también en Personal y Resumen.
+- **Auditoría (`/auditoria`)**: consulta de solo lectura de cambios, con filtros aplicables por botón para módulo, acción, intervalo de fechas y búsqueda. Muestra quién realizó el cambio y los valores anteriores y nuevos disponibles.
 - **Formularios de operación**: las pantallas de alta y edición de personal, turnos, sedes y disponibilidad comparten un formulario que valida y guarda los datos correspondientes; permiten cancelar y regresar a la vista anterior.
 - **Elementos compartidos**: el menú lateral navega entre módulos; el encabezado muestra la fecha y notificaciones recientes. El perfil identifica a la coordinación actual.
 

@@ -1,6 +1,12 @@
 @extends('layouts.app')
 @section('content')
 <div class="page-heading"><div><div class="eyebrow">{{ $eyebrow }}</div><h1>{{ $title }}</h1><p class="lead-copy">{{ $description }}</p></div><a class="btn btn-primary" href="{{ route($actionRoute) }}"><i class="bi bi-plus-lg"></i> {{ $action }}</a></div>
-<div class="module-toolbar"><div class="search-box"><i class="bi bi-search"></i><input type="text" placeholder="Buscar en {{ strtolower($title) }}..." aria-label="Buscar"></div><button class="filter-button" data-action="filter-toggle"><i class="bi bi-funnel"></i> Filtrar <i class="bi bi-chevron-down"></i></button><button class="filter-button" data-action="export"><i class="bi bi-download"></i> Exportar</button></div>
-<div class="panel module-panel"><div class="panel-head"><div><h3>{{ $panelTitle }}</h3><p>Información vigente del sistema</p></div><span class="status-pill">Vista general</span></div><div class="table-responsive"><table class="table align-middle" data-table-role="module-table"><thead><tr>@foreach($columns as $column)<th>{{ $column }}</th>@endforeach</tr></thead><tbody>@foreach($rows as $row)<tr>@foreach($row as $cell)<td>{!! $cell !!}</td>@endforeach</tr>@endforeach</tbody></table></div><div class="pagination-note">Mostrando <span data-record-count>{{ count($rows) }}</span> registros <span><i class="bi bi-chevron-left"></i><b>1</b><i class="bi bi-chevron-right"></i></span></div></div>
+<div class="module-toolbar">
+    <div class="search-box"><i class="bi bi-search"></i><input type="text" placeholder="Buscar en {{ strtolower($title) }}..." aria-label="Buscar"></div>
+    <div class="status-filter">
+        <button class="filter-button" type="button" data-status-filter-toggle aria-expanded="false" aria-haspopup="true"><i class="bi bi-funnel"></i> Filtrar <i class="bi bi-chevron-down"></i></button>
+        <div class="filter-menu" data-status-filter-menu hidden></div>
+    </div>
+</div>
+<div class="panel module-panel"><div class="panel-head"><div><h3>{{ $panelTitle }}</h3><p>Información vigente del sistema</p></div><span class="status-pill">Vista general</span></div><div class="table-responsive"><table class="table align-middle" data-table-role="module-table"><thead><tr>@foreach($columns as $column)<th @if(in_array(mb_strtolower($column), ['estado', 'disponibilidad'], true)) data-status-column @endif>{{ $column }}</th>@endforeach</tr></thead><tbody>@foreach($rows as $row)<tr>@foreach($row as $cell)<td>{!! $cell !!}</td>@endforeach</tr>@endforeach</tbody></table></div><div class="pagination-note">Mostrando <span data-record-count>{{ count($rows) }}</span> registros <span><i class="bi bi-chevron-left"></i><b>1</b><i class="bi bi-chevron-right"></i></span></div></div>
 @endsection

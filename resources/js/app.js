@@ -96,126 +96,78 @@ const setupModuleTable = () => {
     const table = document.querySelector('[data-table-role="module-table"]');
     if (!table) return;
 
-    const tbody = table.querySelector('tbody');
-    const rows = Array.from(tbody.querySelectorAll('tr'));
+    const rows = Array.from(table.querySelectorAll('tbody tr'));
     const searchInput = document.querySelector('.search-box input');
     const recordCount = document.querySelector('[data-record-count]');
-    const filterButton = document.querySelector('[data-action="filter-toggle"]');
-    const exportButton = document.querySelector('[data-action="export"]');
-    const filterOptions = ['todos', 'activos', 'completos', 'pendientes'];
-    let currentFilter = 'todos';
+    const filterToggle = document.querySelector('[data-status-filter-toggle]');
+    const filterMenu = document.querySelector('[data-status-filter-menu]');
+    const statusColumnIndexes = Array.from(table.querySelectorAll('thead th'))
+        .map((header, index) => header.hasAttribute('data-status-column') ? index : -1)
+        .filter((index) => index >= 0);
+    const normalize = (value) => value
+        .normalize('NFD')
+        .replace(/[\u0300-\u036f]/g, '')
+        .toLocaleLowerCase()
+        .replace(/[^a-z0-9]/g, '');
+    const statuses = [...new Set(rows.flatMap((row) => statusColumnIndexes
+        .map((index) => row.cells[index]?.textContent.trim())
+        .filter(Boolean)))].sort((first, second) => first.localeCompare(second, 'es'));
+    let currentStatus = '';
 
-    const getRowText = (row) => row.textContent.replace(/\s+/g, ' ').trim().toLowerCase();
+    if (filterToggle && filterMenu) {
+        const options = ['Todos los estados', ...statuses];
+        options.forEach((status, index) => {
+            const option = document.createElement('button');
+            option.type = 'button';
+            option.className = `filter-option${index === 0 ? ' active' : ''}`;
+            option.dataset.filterStatus = index === 0 ? '' : status;
+            option.textContent = status;
+            filterMenu.appendChild(option);
+        });
+
+        filterToggle.addEventListener('click', () => {
+            filterMenu.hidden = !filterMenu.hidden;
+            filterMenu.classList.toggle('open', !filterMenu.hidden);
+            filterToggle.setAttribute('aria-expanded', String(!filterMenu.hidden));
+        });
+
+        filterMenu.addEventListener('click', (event) => {
+            const option = event.target.closest('[data-filter-status]');
+            if (!option) return;
+
+            currentStatus = option.dataset.filterStatus;
+            filterMenu.querySelectorAll('.filter-option').forEach((item) => {
+                item.classList.toggle('active', item === option);
+            });
+            filterToggle.setAttribute('aria-label', currentStatus ? `Filtrar: ${currentStatus}` : 'Filtrar por estado');
+            filterMenu.hidden = true;
+            filterMenu.classList.remove('open');
+            filterToggle.setAttribute('aria-expanded', 'false');
+            applyFilters();
+            debugLog('Filtro de estado aplicado', { status: currentStatus || 'todos' });
+        });
+    }
 
     const applyFilters = () => {
+        const query = normalize(searchInput?.value ?? '');
         let visibleCount = 0;
 
         rows.forEach((row) => {
-            const text = getRowText(row);
-            const matchesSearch = !searchInput || !searchInput.value.trim() || text.includes(searchInput.value.trim().toLowerCase());
-            const matchesFilter =
-                currentFilter === 'todos' ||
-                (currentFilter === 'activos' && (row.innerHTML.includes('tag-green') || row.innerHTML.includes('status-pill'))) ||
-                (currentFilter === 'completos' && row.innerHTML.includes('tag-green')) ||
-                (currentFilter === 'pendientes' && (row.innerHTML.includes('tag-red') || row.innerHTML.includes('tag-yellow') || row.innerHTML.includes('warning')));
-
-            const shouldDisplay = matchesSearch && matchesFilter;
+            const cedula = row.querySelector('[data-search-cedula]')?.dataset.searchCedula ?? '';
+            const searchableText = normalize(`${row.textContent} ${cedula}`);
+            const matchesSearch = !query || searchableText.includes(query);
+            const matchesStatus = !currentStatus || statusColumnIndexes.some((index) => (
+                normalize(row.cells[index]?.textContent ?? '') === normalize(currentStatus)
+            ));
+            const shouldDisplay = matchesSearch && matchesStatus;
             row.style.display = shouldDisplay ? '' : 'none';
             if (shouldDisplay) visibleCount += 1;
         });
 
-        if (recordCount) {
-            recordCount.textContent = String(visibleCount);
-        }
+        if (recordCount) recordCount.textContent = String(visibleCount);
     };
 
-    if (searchInput) {
-        searchInput.addEventListener('input', applyFilters);
-    }
-
-    if (filterButton) {
-        const menu = document.createElement('div');
-        menu.className = 'filter-menu';
-        menu.innerHTML = filterOptions.map((option) => `
-            <button type="button" class="filter-option ${option === currentFilter ? 'active' : ''}" data-filter-value="${option}">
-                ${option.charAt(0).toUpperCase() + option.slice(1)}
-            </button>
-        `).join('');
-
-        filterButton.parentNode.appendChild(menu);
-
-        menu.addEventListener('click', (event) => {
-            const option = event.target.closest('[data-filter-value]');
-            if (!option) return;
-
-            currentFilter = option.dataset.filterValue;
-            menu.querySelectorAll('.filter-option').forEach((item) => {
-                item.classList.toggle('active', item === option);
-            });
-
-            const label = filterButton.querySelector('span') || document.createElement('span');
-            label.textContent = currentFilter === 'todos' ? 'Filtrar' : currentFilter.charAt(0).toUpperCase() + currentFilter.slice(1);
-            filterButton.insertBefore(label, filterButton.firstChild);
-            applyFilters();
-            showToast(`Filtro aplicado: ${currentFilter}`, 'success');
-            debugLog('Filtro aplicado en el listado', { filter: currentFilter, visibleRows: rows.filter((row) => row.style.display !== 'none').length });
-        });
-
-        filterButton.addEventListener('click', () => {
-            menu.classList.toggle('open');
-        });
-    }
-
-    if (exportButton) {
-        exportButton.addEventListener('click', () => {
-            const visibleRows = rows.filter((row) => row.style.display !== 'none');
-            const headers = Array.from(table.querySelectorAll('thead th')).slice(0, -1).map((cell) => cell.textContent.trim());
-            const csv = [headers.join(',')].concat(
-                visibleRows.map((row) => Array.from(row.querySelectorAll('td')).slice(0, -1).map((cell) => `"${cell.textContent.replace(/\s+/g, ' ').trim()}"`).join(','))
-            ).join('\n');
-
-            const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
-            const url = URL.createObjectURL(blob);
-            const link = document.createElement('a');
-            link.href = url;
-            link.download = 'registros.csv';
-            document.body.appendChild(link);
-            link.click();
-            link.remove();
-            URL.revokeObjectURL(url);
-            showToast('Archivo exportado con éxito', 'success');
-            debugLog('Listado exportado', { visibleRows: visibleRows.length });
-        });
-    }
-
-    rows.forEach((row) => {
-        const menuButton = row.querySelector('[data-action="row-menu"]');
-        if (!menuButton) return;
-
-        const contextMenu = document.createElement('div');
-        contextMenu.className = 'context-menu';
-        contextMenu.innerHTML = `
-            <button type="button" data-menu-action="view">Ver detalle</button>
-            <button type="button" data-menu-action="edit">Editar</button>
-            <button type="button" data-menu-action="delete">Eliminar</button>
-        `;
-        row.appendChild(contextMenu);
-
-        menuButton.addEventListener('click', (event) => {
-            event.stopPropagation();
-            document.querySelectorAll('.context-menu').forEach((menu) => menu.classList.remove('open'));
-            contextMenu.classList.toggle('open');
-        });
-
-        contextMenu.addEventListener('click', (event) => {
-            const action = event.target.closest('[data-menu-action]');
-            if (!action) return;
-
-            const label = action.dataset.menuAction;
-            showToast(`Acción: ${label}`, 'info');
-            contextMenu.classList.remove('open');
-        });
-    });
+    searchInput?.addEventListener('input', applyFilters);
 
     applyFilters();
 };
@@ -292,12 +244,14 @@ document.addEventListener('DOMContentLoaded', () => {
     setupNotifications();
 
     document.addEventListener('click', (event) => {
-        if (!event.target.closest('.filter-menu') && !event.target.closest('[data-action="filter-toggle"]')) {
-            document.querySelectorAll('.filter-menu').forEach((menu) => menu.classList.remove('open'));
-        }
+        if (event.target.closest('[data-status-filter-toggle], [data-status-filter-menu]')) return;
 
-        if (!event.target.closest('.context-menu') && !event.target.closest('[data-action="row-menu"]')) {
-            document.querySelectorAll('.context-menu').forEach((menu) => menu.classList.remove('open'));
-        }
+        document.querySelectorAll('[data-status-filter-menu]').forEach((menu) => {
+            menu.hidden = true;
+            menu.classList.remove('open');
+        });
+        document.querySelectorAll('[data-status-filter-toggle]').forEach((toggle) => {
+            toggle.setAttribute('aria-expanded', 'false');
+        });
     });
 });
