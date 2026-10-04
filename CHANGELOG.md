@@ -22,4 +22,4 @@
 
 ### Alcance pendiente
 
-- La vista Configuración y algunas etiquetas informativas de los listados siguen siendo estáticas y no guardan parámetros en MySQL.
+- Algunas etiquetas informativas de los listados siguen siendo estáticas y no guardan parámetros en MySQL.

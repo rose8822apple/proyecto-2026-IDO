@@ -25,65 +25,52 @@
         </div>
         <div class="stat-card">
             <div class="stat-icon orange"><i class="bi bi-hospital"></i></div>
-            <span>Sedes activas</span>
+            <span>Sedes registradas</span>
             <strong>{{ $sitesCount }}</strong>
             <small class="neutral">{{ $operationalSites }} operativas</small>
         </div>
         <div class="stat-card">
-            <div class="stat-icon green"><i class="bi bi-shield-check"></i></div>
-            <span>Cobertura promedio</span>
-            <strong>{{ $averageCoverage }}<small class="percent">%</small></strong>
-            <small class="neutral">Calculada desde registros reales</small>
+            <div class="stat-icon green"><i class="bi bi-person-check"></i></div>
+            <span>Personal en turno</span>
+            <strong data-stat="people-on-shift">{{ $peopleOnShift }}</strong>
+            <small class="neutral">Activos actualmente</small>
         </div>
     </div>
 
-    <div class="section-row">
-        <div class="section-title">
-            <h2>Actividad reciente</h2>
-            <span class="status-pill">Actualizado del sistema</span>
-        </div>
-        <a class="text-link" href="{{ route('shifts') }}">Ver todos <i class="bi bi-arrow-right"></i></a>
-    </div>
-
-    <div class="content-grid">
-        <div class="panel schedule-panel">
-            <div class="panel-head">
-                <div>
-                    <h3>Turnos creados</h3>
-                    <p>Últimos registros disponibles</p>
-                </div>
-            </div>
-            <div class="shift-list">
-                @foreach($recentShifts as $shift)
-                    <div class="shift-item">
-                        <div class="shift-time">{{ substr($shift->start_time, 0, 5) }}</div>
-                        <div class="shift-line"></div>
-                        <div class="shift-info">
-                            <strong>{{ $shift->title }}</strong>
-                            <span><i class="bi bi-hospital"></i> {{ $shift->site?->name ?? 'Sin sede' }}</span>
-                        </div>
-                        <span class="tag {{ $shift->status === 'Completo' ? 'tag-green' : ($shift->status === 'En curso' ? 'tag-red' : 'tag-yellow') }}">{{ $shift->status }}</span>
-                    </div>
-                @endforeach
+    <div class="panel operational-stats-panel">
+        <div class="panel-head">
+            <div>
+                <h3>Estadísticas operativas</h3>
+                <p>Personal y sedes agrupados por estado</p>
             </div>
         </div>
-
-        <div class="panel coverage-panel">
-            <div class="panel-head">
-                <div>
-                    <h3>Estado general</h3>
-                    <p>Datos actuales del proyecto</p>
+        <div class="stats-status-group">
+            <h4>Personal</h4>
+            <div class="stats-status-grid stats-status-grid-personnel">
+                <div class="stats-status-item">
+                    <span>Operativo</span>
+                    <strong data-stat="operational-people">{{ $operationalPeople }}</strong>
+                </div>
+                <div class="stats-status-item">
+                    <span>En turno</span>
+                    <strong data-stat="people-on-shift">{{ $peopleOnShift }}</strong>
+                </div>
+                <div class="stats-status-item">
+                    <span>No disponible</span>
+                    <strong data-stat="unavailable-people">{{ $unavailablePeople }}</strong>
                 </div>
             </div>
-            <div class="coverage-chart">
-                <div class="donut">
-                    <strong>{{ $averageCoverage }}<small>%</small></strong>
-                    <span>cobertura</span>
+        </div>
+        <div class="stats-status-group">
+            <h4>Sedes</h4>
+            <div class="stats-status-grid">
+                <div class="stats-status-item">
+                    <span>Operativas</span>
+                    <strong data-stat="operational-sites">{{ $operationalSites }}</strong>
                 </div>
-                <div class="coverage-metrics">
-                    <div><strong>{{ $sitesCount }}</strong><span>sedes</span></div>
-                    <div><strong>{{ $peopleCount }}</strong><span>personas</span></div>
-                    <div><strong>{{ $totalShifts }}</strong><span>turnos</span></div>
+                <div class="stats-status-item">
+                    <span>En revisión</span>
+                    <strong data-stat="sites-in-review">{{ $sitesInReview }}</strong>
                 </div>
             </div>
         </div>

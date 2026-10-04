@@ -12,13 +12,21 @@ class Person extends Model
     protected $fillable = [
         'name',
         'email',
+        'cedula',
         'role',
         'phone',
         'status',
+        'coordination_title',
+        'minimum_rest_hours',
     ];
 
     public function availabilities(): HasMany
     {
         return $this->hasMany(Availability::class, 'person_id');
+    }
+
+    public function shiftAssignments(): HasMany
+    {
+        return $this->hasMany(ShiftAssignment::class, 'person_id');
     }
 }

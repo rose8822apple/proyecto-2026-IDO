@@ -81,13 +81,28 @@ En XAMPP, si PHP no está en el `PATH`, ejecuta los comandos Artisan con `C:\xam
 
 - Resumen con conteos, cobertura media y turnos recientes calculados desde la base de datos.
 - CRUD de personal, sedes, turnos y disponibilidad: listados, formularios de alta/edición y eliminación.
+- Las tablas operativas heredadas en español se consolidan en el esquema actual mediante la migración `2026_10_03_000006_consolidate_legacy_operational_tables`; conserva registros y relaciones, añade columnas para los campos históricos y requiere respaldo antes de migrar.
+- Auditoría de solo lectura en `/auditoria`, con filtros por módulo, acción, fechas y búsqueda; registra cambios antes/después desde la migración en adelante.
 - Selector de rol cargado en cada formulario desde `roles.nombre`; la validación del servidor rechaza roles que no estén en esa tabla.
 - Selectores de sede y personal alimentados con registros existentes.
 - Validación de campos requeridos, correo único, referencias existentes, horarios y cobertura entre 0 y 100.
 - Formularios con mensajes de validación y controles de entrada para valores numéricos.
 - Pruebas de integración para formularios, validación de cobertura y operaciones CRUD.
 
-La pantalla Configuración y algunas etiquetas informativas de los listados todavía contienen valores estáticos; no representan parámetros persistidos en MySQL.
+### Resumen de vistas
+
+- **Resumen (`/dashboard`)**: muestra el total de turnos, personas y sedes, agrupa personal y sedes por estado, y presenta alertas operativas con enlaces para revisar turnos o gestionar disponibilidad.
+- **Turnos (`/turnos`)**: lista cada turno con su sede, fecha, horario y estado. Permite buscar, filtrar, exportar y acceder a las acciones de alta, edición y eliminación. La fecha forma parte del turno.
+- **Personal (`/personal`)**: muestra personas, roles y su estado de disponibilidad más reciente. Permite buscar, filtrar, exportar y administrar los registros. La disponibilidad se administra desde su propio módulo.
+- **Sedes activas (`/sedes`)**: presenta sedes, tipo, municipio y estado operativo, con opciones para buscar, filtrar, exportar, registrar, editar y eliminar.
+- **Disponibilidad (`/disponibilidad`)**: relaciona personas con turnos y su estado de disponibilidad. La fecha y el horario se obtienen del turno seleccionado; los cambios se reflejan también en Personal y Resumen.
+- **Auditoría (`/auditoria`)**: consulta de solo lectura de cambios, con filtros por módulo, acción, intervalo de fechas y búsqueda. Muestra quién realizó el cambio y los valores anteriores y nuevos disponibles.
+- **Formularios de operación**: las pantallas de alta y edición de personal, turnos, sedes y disponibilidad comparten un formulario que valida y guarda los datos correspondientes; permiten cancelar y regresar a la vista anterior.
+- **Elementos compartidos**: el menú lateral navega entre módulos; el encabezado muestra la fecha y notificaciones recientes. El perfil identifica a la coordinación actual.
+
+### Consola del navegador
+
+Con `APP_DEBUG=true` en el entorno local, abre las herramientas de desarrollo del navegador (F12) y selecciona **Consola** para ver mensajes de carga de vistas, envío de formularios, filtros, exportaciones y resultados o errores al marcar notificaciones. Los mensajes se desactivan cuando `APP_DEBUG=false`; no incluyen valores de formularios ni información personal.
 
 ### Pruebas
 

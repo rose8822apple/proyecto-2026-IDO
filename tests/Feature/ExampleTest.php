@@ -18,6 +18,10 @@ class ExampleTest extends TestCase
 
         $response->assertRedirect('/dashboard');
 
-        $this->get('/dashboard')->assertOk();
+        $expectedDate = ucfirst(now('America/Caracas')->locale('es')->translatedFormat('l, j \\d\\e F'));
+
+        $this->get('/dashboard')
+            ->assertOk()
+            ->assertSee($expectedDate);
     }
 }

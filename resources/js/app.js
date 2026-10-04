@@ -1,5 +1,25 @@
 import './bootstrap';
 
+const isDebugEnabled = () => document.body?.dataset.debug === 'true';
+
+const debugLog = (message, details = {}) => {
+    if (isDebugEnabled()) {
+        console.info(`[RedSalud] ${message}`, details);
+    }
+};
+
+const debugWarn = (message, details = {}) => {
+    if (isDebugEnabled()) {
+        console.warn(`[RedSalud] ${message}`, details);
+    }
+};
+
+const debugError = (message, error) => {
+    if (isDebugEnabled()) {
+        console.error(`[RedSalud] ${message}`, error);
+    }
+};
+
 const showToast = (message, type = 'info') => {
     const container = document.getElementById('toast-container');
     if (!container) return;
@@ -19,6 +39,57 @@ const showToast = (message, type = 'info') => {
         toast.classList.remove('show');
         setTimeout(() => toast.remove(), 250);
     }, 2600);
+};
+
+const setupNotifications = () => {
+    const toggle = document.querySelector('[data-notification-toggle]');
+    const panel = document.querySelector('[data-notification-panel]');
+    if (!toggle || !panel) return;
+
+    const closePanel = () => {
+        panel.hidden = true;
+        toggle.setAttribute('aria-expanded', 'false');
+    };
+
+    toggle.addEventListener('click', (event) => {
+        event.stopPropagation();
+        panel.hidden = !panel.hidden;
+        toggle.setAttribute('aria-expanded', String(!panel.hidden));
+
+        if (!panel.hidden && document.querySelector('[data-notification-count]')) {
+            debugLog('Marcando notificaciones como vistas');
+            fetch(toggle.dataset.readUrl, {
+                method: 'POST',
+                headers: {
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.content ?? '',
+                    'X-Requested-With': 'XMLHttpRequest',
+                    'Accept': 'application/json',
+                },
+            }).then((response) => {
+                if (!response.ok) throw new Error('No se pudieron marcar como vistas las notificaciones');
+                document.querySelector('[data-notification-count]')?.remove();
+                const total = panel.querySelector('[data-notification-total]');
+                if (total) total.textContent = '0';
+                debugLog('Notificaciones marcadas como vistas');
+            }).catch((error) => {
+                debugError('No se pudieron marcar las notificaciones como vistas', error);
+            });
+        }
+
+        if (!panel.hidden) debugLog('Panel de notificaciones abierto');
+    });
+
+    panel.addEventListener('click', (event) => {
+        if (event.target.closest('a')) closePanel();
+    });
+
+    document.addEventListener('click', (event) => {
+        if (!event.target.closest('.notification-wrap')) closePanel();
+    });
+
+    document.addEventListener('keydown', (event) => {
+        if (event.key === 'Escape') closePanel();
+    });
 };
 
 const setupModuleTable = () => {
@@ -87,6 +158,7 @@ const setupModuleTable = () => {
             filterButton.insertBefore(label, filterButton.firstChild);
             applyFilters();
             showToast(`Filtro aplicado: ${currentFilter}`, 'success');
+            debugLog('Filtro aplicado en el listado', { filter: currentFilter, visibleRows: rows.filter((row) => row.style.display !== 'none').length });
         });
 
         filterButton.addEventListener('click', () => {
@@ -112,6 +184,7 @@ const setupModuleTable = () => {
             link.remove();
             URL.revokeObjectURL(url);
             showToast('Archivo exportado con éxito', 'success');
+            debugLog('Listado exportado', { visibleRows: visibleRows.length });
         });
     }
 
@@ -148,7 +221,7 @@ const setupModuleTable = () => {
 };
 
 const setupDashboardActions = () => {
-    document.querySelectorAll('.icon-button, .more-button, .coverage-link, .alert-list a, .text-link').forEach((element) => {
+    document.querySelectorAll('.icon-button:not([data-notification-toggle]), .more-button, .coverage-link, .alert-list a, .text-link').forEach((element) => {
         element.addEventListener('click', (event) => {
             const actionLabel = element.textContent ? element.textContent.replace(/\s+/g, ' ').trim() : 'Acción';
             if (element.tagName === 'A' && element.getAttribute('href') && !element.hasAttribute('data-action')) {
@@ -185,6 +258,11 @@ const validatePositiveNumber = (input) => {
 };
 
 document.addEventListener('DOMContentLoaded', () => {
+    debugLog('Vista cargada', {
+        view: document.querySelector('.page-heading h1')?.textContent.trim() || document.title,
+        path: window.location.pathname,
+    });
+
     document.querySelectorAll('form').forEach((form) => {
         form.addEventListener('submit', (event) => {
             let isValid = true;
@@ -197,12 +275,21 @@ document.addEventListener('DOMContentLoaded', () => {
 
             if (!isValid) {
                 event.preventDefault();
+                debugWarn('Formulario detenido por validación de valores');
+                return;
             }
+
+            const method = form.querySelector('input[name="_method"]')?.value || form.method;
+            debugLog('Enviando formulario', {
+                method: method.toUpperCase(),
+                path: new URL(form.action, window.location.href).pathname,
+            });
         });
     });
 
     setupDashboardActions();
     setupModuleTable();
+    setupNotifications();
 
     document.addEventListener('click', (event) => {
         if (!event.target.closest('.filter-menu') && !event.target.closest('[data-action="filter-toggle"]')) {
@@ -214,4 +301,3 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 });
-

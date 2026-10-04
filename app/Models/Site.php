@@ -15,6 +15,7 @@ class Site extends Model
         'municipality',
         'coverage',
         'status',
+        'code',
     ];
 
     public function shifts(): HasMany

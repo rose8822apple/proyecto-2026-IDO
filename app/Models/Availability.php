@@ -11,6 +11,7 @@ class Availability extends Model
 
     protected $fillable = [
         'person_id',
+        'shift_id',
         'date',
         'start_time',
         'end_time',
@@ -20,5 +21,10 @@ class Availability extends Model
     public function person(): BelongsTo
     {
         return $this->belongsTo(Person::class);
+    }
+
+    public function shift(): BelongsTo
+    {
+        return $this->belongsTo(Shift::class);
     }
 }
