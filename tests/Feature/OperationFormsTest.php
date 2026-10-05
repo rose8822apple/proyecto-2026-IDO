@@ -145,14 +145,21 @@ class OperationFormsTest extends TestCase
             'site_id' => $site->id,
             'date' => '2026-10-05',
             'end_date' => '2026-10-08',
-            'start_time' => '08:00',
-            'end_time' => '16:00',
+            'start_time' => '08:00:00',
+            'end_time' => '16:00:00',
             'status' => 'En curso',
         ])->assertRedirect('/turnos');
 
         $shift = Shift::query()->where('title', 'Jornada extendida')->firstOrFail();
         $this->assertSame('2026-10-05', $shift->date);
         $this->assertSame('2026-10-08', $shift->end_date);
+        $this->get('/turnos/'.$shift->id.'/editar')
+            ->assertOk()
+            ->assertSee('id="start_time"', false)
+            ->assertSee('id="end_time"', false)
+            ->assertSee('type="time"', false)
+            ->assertSee('value="08:00"', false)
+            ->assertSee('value="16:00"', false);
 
         $this->get('/turnos')
             ->assertOk()
@@ -172,6 +179,32 @@ class OperationFormsTest extends TestCase
         ])->assertSessionHasErrors('end_date');
 
         $this->assertDatabaseMissing('shifts', ['title' => 'Fechas incorrectas']);
+    }
+
+    public function test_shift_accepts_browser_time_format_and_optional_seconds(): void
+    {
+        $site = Site::query()->create([
+            'name' => 'Hospital Central',
+            'type' => 'Hospital',
+            'municipality' => 'San Miguel',
+            'status' => 'Operativa',
+        ]);
+
+        $this->post('/turnos', [
+            'title' => 'Turno navegador',
+            'site_id' => $site->id,
+            'date' => '2026-10-05',
+            'end_date' => '2026-10-05',
+            'start_time' => '08:00',
+            'end_time' => '16:00',
+            'status' => 'En curso',
+        ])->assertRedirect('/turnos');
+
+        $this->assertDatabaseHas('shifts', [
+            'title' => 'Turno navegador',
+            'start_time' => '08:00',
+            'end_time' => '16:00',
+        ]);
     }
 
     public function test_audit_view_has_an_explicit_filter_button(): void
@@ -862,8 +895,8 @@ class OperationFormsTest extends TestCase
             'site_id' => $site->id,
             'date' => '2026-10-01',
             'end_date' => '2026-10-02',
-            'start_time' => '09:00',
-            'end_time' => '15:00',
+            'start_time' => '09:00:00',
+            'end_time' => '15:00:00',
             'status' => 'Completo',
         ])->assertRedirect('/turnos');
 
@@ -876,7 +909,7 @@ class OperationFormsTest extends TestCase
             'status' => 'Asignado',
         ])->assertRedirect('/disponibilidad');
 
-        $this->assertDatabaseHas('availabilities', ['id' => $availability->id, 'shift_id' => $shift->id, 'start_time' => '09:00', 'end_time' => '15:00', 'status' => 'Asignado']);
+        $this->assertDatabaseHas('availabilities', ['id' => $availability->id, 'shift_id' => $shift->id, 'start_time' => '09:00:00', 'end_time' => '15:00:00', 'status' => 'Asignado']);
 
         $this->delete('/disponibilidad/'.$availability->id)->assertRedirect('/disponibilidad');
         $this->delete('/turnos/'.$shift->id)->assertRedirect('/turnos');

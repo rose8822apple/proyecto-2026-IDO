@@ -34,9 +34,15 @@ class OperationController extends Controller
     {
         foreach ($fields as $index => $field) {
             $name = $field['name'];
-            $fields[$index]['value'] = $model && isset($model->{$name})
+            $value = $model && isset($model->{$name})
                 ? $model->{$name}
                 : old($name, $field['value'] ?? null);
+
+            if (($field['type'] ?? null) === 'time' && is_string($value)) {
+                $value = substr($value, 0, 5);
+            }
+
+            $fields[$index]['value'] = $value;
         }
 
         return $fields;
@@ -237,9 +243,12 @@ class OperationController extends Controller
             'site_id' => ['required', 'integer', 'exists:sites,id'],
             'date' => ['required', 'date'],
             'end_date' => ['required', 'date', 'after_or_equal:date'],
-            'start_time' => ['required', 'date_format:H:i'],
-            'end_time' => ['required', 'date_format:H:i'],
+            'start_time' => ['required', 'regex:/^(?:[01][0-9]|2[0-3]):[0-5][0-9](?::[0-5][0-9])?$/'],
+            'end_time' => ['required', 'regex:/^(?:[01][0-9]|2[0-3]):[0-5][0-9](?::[0-5][0-9])?$/'],
             'status' => ['required', 'string', 'max:50'],
+        ], [
+            'start_time.regex' => 'La hora de inicio debe tener el formato HH:mm.',
+            'end_time.regex' => 'La hora de fin debe tener el formato HH:mm.',
         ]);
 
         DB::transaction(function () use ($validated): void {
@@ -257,9 +266,12 @@ class OperationController extends Controller
             'site_id' => ['required', 'integer', 'exists:sites,id'],
             'date' => ['required', 'date'],
             'end_date' => ['required', 'date', 'after_or_equal:date'],
-            'start_time' => ['required', 'date_format:H:i'],
-            'end_time' => ['required', 'date_format:H:i'],
+            'start_time' => ['required', 'regex:/^(?:[01][0-9]|2[0-3]):[0-5][0-9](?::[0-5][0-9])?$/'],
+            'end_time' => ['required', 'regex:/^(?:[01][0-9]|2[0-3]):[0-5][0-9](?::[0-5][0-9])?$/'],
             'status' => ['required', 'string', 'max:50'],
+        ], [
+            'start_time.regex' => 'La hora de inicio debe tener el formato HH:mm.',
+            'end_time.regex' => 'La hora de fin debe tener el formato HH:mm.',
         ]);
 
         DB::transaction(function () use ($shift, $validated): void {
