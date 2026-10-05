@@ -85,7 +85,6 @@ En XAMPP, si PHP no está en el `PATH`, ejecuta los comandos Artisan con `C:\xam
 - Auditoría de solo lectura en `/auditoria`, con filtros por módulo, acción, fechas y búsqueda; registra cambios antes/después desde la migración en adelante.
 - Selector de rol cargado en cada formulario desde `roles.nombre`; la validación del servidor rechaza roles que no estén en esa tabla.
 - Selectores de sede y personal alimentados con registros existentes.
-- Validación de campos requeridos, correo único, referencias existentes, horarios y cobertura entre 0 y 100.
 - Formularios con mensajes de validación y controles de entrada para valores numéricos.
 - Pruebas de integración para formularios, validación de cobertura y operaciones CRUD.
 
