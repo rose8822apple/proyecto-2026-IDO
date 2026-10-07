@@ -121,14 +121,134 @@ class OperationFormsTest extends TestCase
             ->assertDontSee('Exportar');
     }
 
+    public function test_module_lists_include_pagination_with_ten_rows_per_page(): void
+    {
+        for ($index = 1; $index <= 12; $index++) {
+            Person::query()->create([
+                'name' => 'Persona '.$index,
+                'email' => 'persona'.$index.'@example.com',
+                'role' => 'Voluntario',
+            ]);
+        }
+
+        $this->get('/personal')
+            ->assertOk()
+            ->assertSee('data-page-size="10"', false)
+            ->assertSee('data-page-previous', false)
+            ->assertSee('data-page-next', false)
+            ->assertSee('data-range-start', false)
+            ->assertSee('data-range-end', false);
+    }
+
+    public function test_audit_list_shows_ten_rows_per_page(): void
+    {
+        for ($index = 1; $index <= 11; $index++) {
+            AuditLog::query()->create([
+                'event' => 'created',
+                'auditable_type' => Person::class,
+                'auditable_id' => $index,
+                'new_values' => ['name' => 'Persona '.$index],
+            ]);
+        }
+
+        $this->get('/auditoria')
+            ->assertOk()
+            ->assertViewHas('auditLogs', fn ($auditLogs) => $auditLogs->perPage() === 10
+                && $auditLogs->count() === 10
+                && $auditLogs->hasMorePages());
+    }
+
     public function test_availability_status_selector_does_not_offer_assigned(): void
     {
         $this->get('/disponibilidad/nueva')
             ->assertOk()
-            ->assertSee('Disponible')
-            ->assertSee('No disponible')
-            ->assertSee('Horario específico')
+            ->assertDontSee('name="status"', false)
+            ->assertDontSee('Descanso mínimo')
             ->assertDontSee('Asignado');
+    }
+
+    public function test_availability_person_preview_supports_people_table_without_status_column(): void
+    {
+        Schema::table('people', function (Blueprint $table): void {
+            $table->dropColumn('status');
+        });
+
+        Person::query()->create([
+            'name' => 'Ana García',
+            'email' => 'ana@example.com',
+            'role' => 'Médico',
+        ]);
+
+        $this->get('/disponibilidad/nueva')
+            ->assertOk()
+            ->assertSee('data-person-status="Sin estado"', false);
+    }
+
+    public function test_person_cannot_be_assigned_overlapping_shifts_but_can_take_a_non_overlapping_shift(): void
+    {
+        $person = Person::query()->create([
+            'name' => 'Ana García',
+            'email' => 'ana@example.com',
+            'role' => 'Médico',
+        ]);
+        $site = Site::query()->create([
+            'name' => 'Hospital Central',
+            'type' => 'Hospital',
+            'municipality' => 'San Miguel',
+            'status' => 'Operativa',
+        ]);
+        $firstShift = Shift::query()->create([
+            'title' => 'Turno matutino',
+            'site_id' => $site->id,
+            'date' => '2026-10-10',
+            'end_date' => '2026-10-10',
+            'start_time' => '08:00',
+            'end_time' => '14:00',
+            'status' => 'En curso',
+        ]);
+        $overlappingShift = Shift::query()->create([
+            'title' => 'Turno intermedio',
+            'site_id' => $site->id,
+            'date' => '2026-10-10',
+            'end_date' => '2026-10-10',
+            'start_time' => '13:00',
+            'end_time' => '17:00',
+            'status' => 'En curso',
+        ]);
+        $nonOverlappingShift = Shift::query()->create([
+            'title' => 'Turno nocturno',
+            'site_id' => $site->id,
+            'date' => '2026-10-10',
+            'end_date' => '2026-10-10',
+            'start_time' => '14:00',
+            'end_time' => '20:00',
+            'status' => 'En curso',
+        ]);
+
+        $this->post('/disponibilidad', [
+            'person_id' => $person->id,
+            'shift_id' => $firstShift->id,
+        ])->assertRedirect('/disponibilidad');
+
+        $this->from('/disponibilidad/nueva')
+            ->post('/disponibilidad', [
+                'person_id' => $person->id,
+                'shift_id' => $overlappingShift->id,
+            ])
+            ->assertRedirect('/disponibilidad/nueva')
+            ->assertSessionHasErrors('person_id');
+
+        $this->post('/disponibilidad', [
+            'person_id' => $person->id,
+            'shift_id' => $nonOverlappingShift->id,
+        ])->assertRedirect('/disponibilidad');
+
+        $this->assertDatabaseCount('availabilities', 2);
+        $this->assertDatabaseHas('availabilities', [
+            'person_id' => $person->id,
+            'shift_id' => $nonOverlappingShift->id,
+            'status' => 'No disponible',
+        ]);
     }
 
     public function test_shift_can_be_created_with_a_date_range_and_end_must_not_precede_start(): void
@@ -301,6 +421,12 @@ class OperationFormsTest extends TestCase
 
         $this->get('/disponibilidad/nueva')
             ->assertOk()
+            ->assertSee('data-person-select', false)
+            ->assertSee('data-person-name="Ana García"', false)
+            ->assertSee('data-person-cedula="E-1234567890"', false)
+            ->assertSee('data-person-phone="No registrado"', false)
+            ->assertSee('data-person-preview', false)
+            ->assertSee('Verifica la persona seleccionada')
             ->assertSee('name="shift_id"', false)
             ->assertSee('Turno matutino | Hospital Central | 08:00 - 14:00')
             ->assertDontSee('name="start_time"', false)
@@ -321,11 +447,15 @@ class OperationFormsTest extends TestCase
             'shift_id' => $shift->id,
             'start_time' => $shift->start_time,
             'end_time' => $shift->end_time,
+            'status' => 'No disponible',
         ]);
 
         $this->get('/disponibilidad/'.$availability->id.'/editar')
             ->assertOk()
-            ->assertSee('value="'.$shift->id.'" selected', false)
+            ->assertSee('value="'.$person->id.'"', false)
+            ->assertSee('selected', false)
+            ->assertSee('data-person-email="ana@example.com"', false)
+            ->assertSee('value="'.$shift->id.'"', false)
             ->assertDontSee('name="start_time"', false)
             ->assertDontSee('name="end_time"', false);
     }
@@ -517,6 +647,57 @@ class OperationFormsTest extends TestCase
         ])->assertSessionHasErrors('cedula_number');
 
         $this->assertDatabaseMissing('people', ['email' => 'luis@example.com']);
+    }
+
+    public function test_duplicate_cedula_shows_user_exists_alert_and_does_not_create_person(): void
+    {
+        DB::table('roles')->insert(['nombre' => 'Médico']);
+        Person::query()->create([
+            'name' => 'Ana García',
+            'email' => 'ana@example.com',
+            'cedula' => 'V-1234567890',
+            'role' => 'Médico',
+        ]);
+
+        $this->from('/personal/nuevo')
+            ->followingRedirects()
+            ->post('/personal', [
+                'name' => 'Luis Pérez',
+                'email' => 'luis@example.com',
+                'cedula_prefix' => 'V-',
+                'cedula_number' => '1234567890',
+                'role' => 'Médico',
+            ])
+            ->assertOk()
+            ->assertSee('Usuario existente: la cédula ya está registrada.');
+
+        $this->assertDatabaseCount('people', 1);
+        $this->assertDatabaseMissing('people', ['email' => 'luis@example.com']);
+    }
+
+    public function test_person_can_be_updated_without_changing_to_a_duplicate_cedula(): void
+    {
+        DB::table('roles')->insert(['nombre' => 'Médico']);
+        $person = Person::query()->create([
+            'name' => 'Ana García',
+            'email' => 'ana@example.com',
+            'cedula' => 'V-1234567890',
+            'role' => 'Médico',
+        ]);
+
+        $this->put('/personal/'.$person->id, [
+            'name' => 'Ana García Ruiz',
+            'email' => 'ana@example.com',
+            'cedula_prefix' => 'V-',
+            'cedula_number' => '1234567890',
+            'role' => 'Médico',
+        ])->assertRedirect('/personal');
+
+        $this->assertDatabaseHas('people', [
+            'id' => $person->id,
+            'name' => 'Ana García Ruiz',
+            'cedula' => 'V-1234567890',
+        ]);
     }
 
     public function test_audit_logger_stores_snapshots_without_sensitive_person_fields(): void
@@ -909,7 +1090,7 @@ class OperationFormsTest extends TestCase
             'status' => 'Asignado',
         ])->assertRedirect('/disponibilidad');
 
-        $this->assertDatabaseHas('availabilities', ['id' => $availability->id, 'shift_id' => $shift->id, 'start_time' => '09:00:00', 'end_time' => '15:00:00', 'status' => 'Asignado']);
+        $this->assertDatabaseHas('availabilities', ['id' => $availability->id, 'shift_id' => $shift->id, 'start_time' => '09:00:00', 'end_time' => '15:00:00', 'status' => 'No disponible']);
 
         $this->delete('/disponibilidad/'.$availability->id)->assertRedirect('/disponibilidad');
         $this->delete('/turnos/'.$shift->id)->assertRedirect('/turnos');

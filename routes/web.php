@@ -74,7 +74,7 @@ Route::get('/auditoria', function (Request $request) {
     }
 
     return view('audit.index', [
-        'auditLogs' => $query->paginate(20)->withQueryString(),
+        'auditLogs' => $query->paginate(10)->withQueryString(),
         'entityOptions' => [
             'people' => 'Personal',
             'shifts' => 'Turnos',
@@ -224,7 +224,6 @@ Route::get('/disponibilidad', function () {
             $shiftDate,
             $shiftTime,
             '<span class="availability ' . ($availability->status === 'Disponible' ? 'available' : ($availability->status === 'Asignado' ? 'assigned' : 'unavailable')) . '">' . e($availability->status) . '</span>',
-            'Descanso mínimo',
             '<div class="table-actions"><a class="btn btn-secondary btn-small" href="' . route('availability.edit', $availability) . '">Editar</a><form action="' . route('availability.destroy', $availability) . '" method="POST" onsubmit="return confirm(\'¿Eliminar esta disponibilidad?\');" style="display:inline;">' . csrf_field() . method_field('DELETE') . '<button type="submit" class="btn btn-danger btn-small">Eliminar</button></form></div>',
         ];
     })->toArray();
@@ -232,11 +231,11 @@ Route::get('/disponibilidad', function () {
     return view('module', [
         'title' => 'Disponibilidad',
         'eyebrow' => 'PLANIFICACIÓN',
-        'description' => 'Revisa las ventanas disponibles y protege los tiempos de descanso del equipo.',
+        'description' => 'Consulta los turnos asignados al personal y evita cruces de horario.',
         'action' => 'Registrar disponibilidad',
         'actionRoute' => 'availability.create',
         'panelTitle' => 'Disponibilidad declarada',
-        'columns' => ['Persona', 'Fecha', 'Horario', 'Estado', 'Descanso mínimo', 'Acciones'],
+        'columns' => ['Persona', 'Fecha', 'Horario', 'Estado', 'Acciones'],
         'rows' => $rows,
     ]);
 })->name('availability');

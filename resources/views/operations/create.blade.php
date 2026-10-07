@@ -90,10 +90,29 @@
                             >
                         </div>
                     @elseif (($field['type'] ?? 'text') === 'select')
-                        <select id="{{ $field['name'] }}" name="{{ $field['name'] }}" @if(!empty($field['required'])) required @endif>
+                        <select
+                            id="{{ $field['name'] }}"
+                            name="{{ $field['name'] }}"
+                            @if(($field['name'] ?? '') === 'person_id') data-person-select @endif
+                            @if(!empty($field['required'])) required @endif
+                        >
                             <option value="">Selecciona una opción</option>
                             @foreach (($field['options'] ?? []) as $valueOption => $label)
-                                <option value="{{ $valueOption }}" {{ $value == $valueOption ? 'selected' : '' }}>{{ $label }}</option>
+                                @php
+                                    $optionDetails = $field['option_details'][$valueOption] ?? [];
+                                @endphp
+                                <option
+                                    value="{{ $valueOption }}"
+                                    @if(($field['name'] ?? '') === 'person_id')
+                                        data-person-name="{{ $optionDetails['name'] ?? '' }}"
+                                        data-person-email="{{ $optionDetails['email'] ?? '' }}"
+                                        data-person-role="{{ $optionDetails['role'] ?? '' }}"
+                                        data-person-cedula="{{ $optionDetails['cedula'] ?? '' }}"
+                                        data-person-phone="{{ $optionDetails['phone'] ?? '' }}"
+                                        data-person-status="{{ $optionDetails['status'] ?? '' }}"
+                                    @endif
+                                    {{ $value == $valueOption ? 'selected' : '' }}
+                                >{{ $label }}</option>
                             @endforeach
                         </select>
                     @else
@@ -114,6 +133,26 @@
                     @endif
                 </div>
             @endforeach
+
+            @if (!empty($showPersonPreview))
+                <section class="person-preview" data-person-preview hidden aria-live="polite" aria-atomic="true">
+                    <div class="person-preview-heading">
+                        <i class="bi bi-person-check-fill" aria-hidden="true"></i>
+                        <div>
+                            <h4>Verifica la persona seleccionada</h4>
+                            <p>Confirma estos datos antes de guardar la disponibilidad.</p>
+                        </div>
+                    </div>
+                    <dl class="person-preview-details">
+                        <div><dt>Nombre</dt><dd data-person-preview-name></dd></div>
+                        <div><dt>Cédula</dt><dd data-person-preview-cedula></dd></div>
+                        <div><dt>Rol</dt><dd data-person-preview-role></dd></div>
+                        <div><dt>Teléfono</dt><dd data-person-preview-phone></dd></div>
+                        <div><dt>Correo</dt><dd data-person-preview-email></dd></div>
+                        <div><dt>Estado actual</dt><dd data-person-preview-status></dd></div>
+                    </dl>
+                </section>
+            @endif
 
             <div class="form-actions">
                 <a href="{{ url()->previous() ?: route('dashboard') }}" class="btn btn-secondary">Cancelar</a>

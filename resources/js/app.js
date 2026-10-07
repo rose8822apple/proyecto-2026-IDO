@@ -101,6 +101,13 @@ const setupModuleTable = () => {
     const recordCount = document.querySelector('[data-record-count]');
     const filterToggle = document.querySelector('[data-status-filter-toggle]');
     const filterMenu = document.querySelector('[data-status-filter-menu]');
+    const pagination = document.querySelector('[data-table-pagination]');
+    const rangeStart = pagination?.querySelector('[data-range-start]');
+    const rangeEnd = pagination?.querySelector('[data-range-end]');
+    const pageIndicator = pagination?.querySelector('[data-page-indicator]');
+    const previousPage = pagination?.querySelector('[data-page-previous]');
+    const nextPage = pagination?.querySelector('[data-page-next]');
+    const pageSize = Number.parseInt(table.dataset.pageSize ?? '10', 10);
     const statusColumnIndexes = Array.from(table.querySelectorAll('thead th'))
         .map((header, index) => header.hasAttribute('data-status-column') ? index : -1)
         .filter((index) => index >= 0);
@@ -113,6 +120,7 @@ const setupModuleTable = () => {
         .map((index) => row.cells[index]?.textContent.trim())
         .filter(Boolean)))].sort((first, second) => first.localeCompare(second, 'es'));
     let currentStatus = '';
+    let currentPage = 1;
 
     if (filterToggle && filterMenu) {
         const options = ['Todos los estados', ...statuses];
@@ -143,33 +151,86 @@ const setupModuleTable = () => {
             filterMenu.hidden = true;
             filterMenu.classList.remove('open');
             filterToggle.setAttribute('aria-expanded', 'false');
-            applyFilters();
+            applyFilters(true);
             debugLog('Filtro de estado aplicado', { status: currentStatus || 'todos' });
         });
     }
 
-    const applyFilters = () => {
+    const applyFilters = (resetPage = false) => {
+        if (resetPage) currentPage = 1;
         const query = normalize(searchInput?.value ?? '');
-        let visibleCount = 0;
-
-        rows.forEach((row) => {
+        const filteredRows = rows.filter((row) => {
             const cedula = row.querySelector('[data-search-cedula]')?.dataset.searchCedula ?? '';
             const searchableText = normalize(`${row.textContent} ${cedula}`);
             const matchesSearch = !query || searchableText.includes(query);
             const matchesStatus = !currentStatus || statusColumnIndexes.some((index) => (
                 normalize(row.cells[index]?.textContent ?? '') === normalize(currentStatus)
             ));
-            const shouldDisplay = matchesSearch && matchesStatus;
-            row.style.display = shouldDisplay ? '' : 'none';
-            if (shouldDisplay) visibleCount += 1;
+            return matchesSearch && matchesStatus;
         });
 
-        if (recordCount) recordCount.textContent = String(visibleCount);
+        const pageCount = Math.max(1, Math.ceil(filteredRows.length / pageSize));
+        currentPage = Math.min(currentPage, pageCount);
+        const firstIndex = (currentPage - 1) * pageSize;
+        const pageRows = new Set(filteredRows.slice(firstIndex, firstIndex + pageSize));
+
+        rows.forEach((row) => {
+            row.style.display = pageRows.has(row) ? '' : 'none';
+        });
+
+        if (recordCount) recordCount.textContent = String(filteredRows.length);
+        if (rangeStart) rangeStart.textContent = filteredRows.length ? String(firstIndex + 1) : '0';
+        if (rangeEnd) rangeEnd.textContent = String(Math.min(firstIndex + pageSize, filteredRows.length));
+        if (pageIndicator) pageIndicator.textContent = `${currentPage} / ${pageCount}`;
+        if (previousPage) previousPage.disabled = currentPage === 1;
+        if (nextPage) nextPage.disabled = currentPage === pageCount;
+        if (pagination) pagination.hidden = pageCount <= 1;
     };
 
-    searchInput?.addEventListener('input', applyFilters);
+    searchInput?.addEventListener('input', () => applyFilters(true));
+    previousPage?.addEventListener('click', () => {
+        if (currentPage > 1) {
+            currentPage -= 1;
+            applyFilters();
+        }
+    });
+    nextPage?.addEventListener('click', () => {
+        currentPage += 1;
+        applyFilters();
+    });
 
     applyFilters();
+};
+
+const setupPersonPreview = () => {
+    const select = document.querySelector('[data-person-select]');
+    const preview = document.querySelector('[data-person-preview]');
+    if (!select || !preview) return;
+
+    const fields = {
+        name: preview.querySelector('[data-person-preview-name]'),
+        cedula: preview.querySelector('[data-person-preview-cedula]'),
+        role: preview.querySelector('[data-person-preview-role]'),
+        phone: preview.querySelector('[data-person-preview-phone]'),
+        email: preview.querySelector('[data-person-preview-email]'),
+        status: preview.querySelector('[data-person-preview-status]'),
+    };
+
+    const updatePreview = () => {
+        const option = select.selectedOptions[0];
+        if (!option?.value) {
+            preview.hidden = true;
+            return;
+        }
+
+        Object.entries(fields).forEach(([field, element]) => {
+            if (element) element.textContent = option.dataset[`person${field[0].toUpperCase()}${field.slice(1)}`] || 'No registrado';
+        });
+        preview.hidden = false;
+    };
+
+    select.addEventListener('change', updatePreview);
+    updatePreview();
 };
 
 const setupDashboardActions = () => {
@@ -241,6 +302,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     setupDashboardActions();
     setupModuleTable();
+    setupPersonPreview();
     setupNotifications();
 
     document.addEventListener('click', (event) => {

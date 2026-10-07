@@ -11,6 +11,8 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Schema;
+use Illuminate\Validation\ValidationException;
 use Illuminate\Validation\Rule;
 
 class OperationController extends Controller
@@ -76,6 +78,34 @@ class OperationController extends Controller
         return $validated;
     }
 
+    protected function cedulaRules(Request $request, ?Person $person = null): array
+    {
+        return [
+            'cedula_prefix' => ['nullable', 'required_with:cedula_number', Rule::in(['V-', 'E-'])],
+            'cedula_number' => [
+                'nullable',
+                'required_with:cedula_prefix',
+                'digits_between:1,10',
+                function ($attribute, $value, $fail) use ($request, $person): void {
+                    $prefix = $request->input('cedula_prefix');
+
+                    if (! in_array($prefix, ['V-', 'E-'], true) || ! is_string($value) || ! preg_match('/^\d{1,10}$/', $value)) {
+                        return;
+                    }
+
+                    $query = Person::query()->where('cedula', $prefix.$value);
+                    if ($person) {
+                        $query->where('id', '!=', $person->id);
+                    }
+
+                    if ($query->exists()) {
+                        $fail('Usuario existente: la cédula ya está registrada.');
+                    }
+                },
+            ],
+        ];
+    }
+
     protected function availableRoles(): array
     {
         return DB::table('roles')
@@ -100,6 +130,113 @@ class OperationController extends Controller
                     .' | '.$shift->title.' | '.($shift->site?->name ?? 'Sin sede').' | '.substr($shift->start_time, 0, 5).' - '.substr($shift->end_time, 0, 5),
             ])
             ->all();
+    }
+
+    protected function availabilityPersonField(): array
+    {
+        $columns = ['id', 'name', 'email', 'role', 'cedula', 'phone'];
+        if (Schema::hasColumn('people', 'status')) {
+            $columns[] = 'status';
+        }
+
+        $people = Person::query()
+            ->select($columns)
+            ->orderBy('name')
+            ->get();
+
+        return [
+            'name' => 'person_id',
+            'label' => 'Persona',
+            'type' => 'select',
+            'options' => $people->mapWithKeys(fn (Person $person) => [$person->id => $person->name])->all(),
+            'option_details' => $people->mapWithKeys(fn (Person $person) => [
+                $person->id => [
+                    'name' => $person->name,
+                    'email' => $person->email,
+                    'role' => $person->role,
+                    'cedula' => $person->cedula ?: 'No registrada',
+                    'phone' => $person->phone ?: 'No registrado',
+                    'status' => $person->status ?: 'Sin estado',
+                ],
+            ])->all(),
+            'required' => true,
+        ];
+    }
+
+    protected function hasAvailabilityConflict(
+        int $personId,
+        Shift $shift,
+        ?int $exceptAvailabilityId = null,
+        ?string $candidateDate = null,
+    ): bool
+    {
+        $candidateStartDate = (string) ($shift->date ?? $candidateDate ?? now()->toDateString());
+        $candidateEndDate = (string) ($shift->end_date ?? $candidateStartDate);
+        $candidateTimes = $this->splitShiftTimes((string) $shift->start_time, (string) $shift->end_time);
+
+        $availabilities = Availability::query()
+            ->with('shift')
+            ->where('person_id', $personId)
+            ->when($exceptAvailabilityId, fn ($query) => $query->whereKeyNot($exceptAvailabilityId))
+            ->get();
+
+        foreach ($availabilities as $availability) {
+            $existingStartDate = (string) ($availability->shift?->date ?? $availability->date);
+            $existingEndDate = (string) ($availability->shift?->end_date ?? $existingStartDate);
+            $existingTimes = $this->splitShiftTimes(
+                (string) ($availability->shift?->start_time ?? $availability->start_time),
+                (string) ($availability->shift?->end_time ?? $availability->end_time),
+            );
+
+            foreach ($candidateTimes as [$candidateStart, $candidateEnd, $candidateOffset]) {
+                $candidateChunkStart = $this->shiftDateByDays($candidateStartDate, $candidateOffset);
+                $candidateChunkEnd = $this->shiftDateByDays($candidateEndDate, $candidateOffset);
+
+                foreach ($existingTimes as [$existingStart, $existingEnd, $existingOffset]) {
+                    $existingChunkStart = $this->shiftDateByDays($existingStartDate, $existingOffset);
+                    $existingChunkEnd = $this->shiftDateByDays($existingEndDate, $existingOffset);
+
+                    $datesOverlap = $candidateChunkStart <= $existingChunkEnd
+                        && $existingChunkStart <= $candidateChunkEnd;
+                    $timesOverlap = $candidateStart < $existingEnd && $existingStart < $candidateEnd;
+
+                    if ($datesOverlap && $timesOverlap) {
+                        return true;
+                    }
+                }
+            }
+        }
+
+        return false;
+    }
+
+    protected function splitShiftTimes(string $startTime, string $endTime): array
+    {
+        $start = ((int) substr($startTime, 0, 2) * 60) + (int) substr($startTime, 3, 2);
+        $end = ((int) substr($endTime, 0, 2) * 60) + (int) substr($endTime, 3, 2);
+
+        return $end > $start
+            ? [[$start, $end, 0]]
+            : [[$start, 1440, 0], [0, $end, 1]];
+    }
+
+    protected function shiftDateByDays(string $date, int $days): string
+    {
+        return (new \DateTimeImmutable($date))->modify("+{$days} days")->format('Y-m-d');
+    }
+
+    protected function ensureNoAvailabilityConflict(
+        int $personId,
+        Shift $shift,
+        ?int $exceptAvailabilityId = null,
+        ?string $candidateDate = null,
+    ): void
+    {
+        if ($this->hasAvailabilityConflict($personId, $shift, $exceptAvailabilityId, $candidateDate)) {
+            throw ValidationException::withMessages([
+                'person_id' => 'La persona ya tiene asignado un turno que se cruza en fecha y horario.',
+            ]);
+        }
     }
 
     public function createPerson()
@@ -134,8 +271,7 @@ class OperationController extends Controller
         $validated = $request->validate([
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'email', 'max:255', 'unique:people,email'],
-            'cedula_prefix' => ['nullable', 'required_with:cedula_number', Rule::in(['V-', 'E-'])],
-            'cedula_number' => ['nullable', 'required_with:cedula_prefix', 'digits_between:1,10'],
+            ...$this->cedulaRules($request),
             'role' => ['required', 'string', 'max:100', Rule::in($this->availableRoles())],
             'phone_prefix' => ['nullable', 'required_with:phone_number', Rule::in(self::PHONE_PREFIXES)],
             'phone_number' => ['nullable', 'required_with:phone_prefix', 'digits:7'],
@@ -158,8 +294,7 @@ class OperationController extends Controller
         $validated = $request->validate([
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'email', 'max:255', Rule::unique('people', 'email')->ignore($person->id)],
-            'cedula_prefix' => ['nullable', 'required_with:cedula_number', Rule::in(['V-', 'E-'])],
-            'cedula_number' => ['nullable', 'required_with:cedula_prefix', 'digits_between:1,10'],
+            ...$this->cedulaRules($request, $person),
             'role' => ['required', 'string', 'max:100', Rule::in($this->availableRoles())],
             'phone_prefix' => ['nullable', 'required_with:phone_number', Rule::in(self::PHONE_PREFIXES)],
             'phone_number' => ['nullable', 'required_with:phone_prefix', 'digits:7'],
@@ -379,38 +514,36 @@ class OperationController extends Controller
 
     public function createAvailability()
     {
-        $people = Person::query()->orderBy('name')->pluck('name', 'id')->all();
         $shifts = $this->availableShifts();
 
         return view('operations.create', [
             'title' => 'Registrar disponibilidad',
-            'description' => 'Selecciona el turno y el estado de disponibilidad para la persona.',
+            'description' => 'Selecciona a la persona, verifica sus datos y registra su disponibilidad.',
             'action' => route('availability.store'),
             'submitText' => 'Guardar disponibilidad',
             'fields' => $this->buildFields([
-                ['name' => 'person_id', 'label' => 'Persona', 'type' => 'select', 'options' => $people, 'required' => true],
+                $this->availabilityPersonField(),
                 ['name' => 'shift_id', 'label' => 'Turno', 'type' => 'select', 'options' => $shifts, 'required' => true],
-                ['name' => 'status', 'label' => 'Estado', 'type' => 'select', 'options' => ['Disponible' => 'Disponible', 'No disponible' => 'No disponible', 'Horario específico' => 'Horario específico'], 'required' => true],
             ]),
+            'showPersonPreview' => true,
         ]);
     }
 
     public function editAvailability(Availability $availability)
     {
-        $people = Person::query()->orderBy('name')->pluck('name', 'id')->all();
         $shifts = $this->availableShifts();
 
         return view('operations.create', [
             'title' => 'Editar disponibilidad',
-            'description' => 'Actualiza la persona, el turno seleccionado y el estado de disponibilidad.',
+            'description' => 'Verifica los datos de la persona antes de actualizar su disponibilidad.',
             'action' => route('availability.update', $availability),
             'submitText' => 'Actualizar disponibilidad',
             'method' => 'PUT',
             'fields' => $this->buildFields([
-                ['name' => 'person_id', 'label' => 'Persona', 'type' => 'select', 'options' => $people, 'required' => true],
+                $this->availabilityPersonField(),
                 ['name' => 'shift_id', 'label' => 'Turno', 'type' => 'select', 'options' => $shifts, 'required' => true],
-                ['name' => 'status', 'label' => 'Estado', 'type' => 'select', 'options' => ['Disponible' => 'Disponible', 'No disponible' => 'No disponible', 'Horario específico' => 'Horario específico'], 'required' => true],
             ], $availability),
+            'showPersonPreview' => true,
         ]);
     }
 
@@ -420,15 +553,21 @@ class OperationController extends Controller
             'person_id' => ['required', 'integer', 'exists:people,id'],
             'shift_id' => ['required', 'integer', 'exists:shifts,id'],
             'date' => ['nullable', 'date'],
-            'status' => ['required', 'string', 'max:50'],
         ]);
 
         $shift = Shift::findOrFail($validated['shift_id']);
         $validated['date'] ??= $shift->date ?? now()->toDateString();
         $validated['start_time'] = $shift->start_time;
         $validated['end_time'] = $shift->end_time;
+        $validated['status'] = 'No disponible';
 
-        DB::transaction(function () use ($validated): void {
+        DB::transaction(function () use ($validated, $shift): void {
+            Person::query()->whereKey($validated['person_id'])->lockForUpdate()->firstOrFail();
+            $this->ensureNoAvailabilityConflict(
+                (int) $validated['person_id'],
+                $shift,
+                candidateDate: $validated['date'],
+            );
             $availability = Availability::create($validated);
             $this->logOperation('availability.created', $availability, ['fields' => array_keys($validated)]);
         });
@@ -442,15 +581,22 @@ class OperationController extends Controller
             'person_id' => ['required', 'integer', 'exists:people,id'],
             'shift_id' => ['required', 'integer', 'exists:shifts,id'],
             'date' => ['nullable', 'date'],
-            'status' => ['required', 'string', 'max:50'],
         ]);
 
         $shift = Shift::findOrFail($validated['shift_id']);
         $validated['date'] ??= $shift->date ?? $availability->date ?? now()->toDateString();
         $validated['start_time'] = $shift->start_time;
         $validated['end_time'] = $shift->end_time;
+        $validated['status'] = 'No disponible';
 
-        DB::transaction(function () use ($availability, $validated): void {
+        DB::transaction(function () use ($availability, $validated, $shift): void {
+            Person::query()->whereKey($validated['person_id'])->lockForUpdate()->firstOrFail();
+            $this->ensureNoAvailabilityConflict(
+                (int) $validated['person_id'],
+                $shift,
+                $availability->id,
+                $validated['date'],
+            );
             $before = $availability->getAttributes();
             $availability->update($validated);
             $this->logOperation('availability.updated', $availability, ['fields' => array_keys($validated)], $before);

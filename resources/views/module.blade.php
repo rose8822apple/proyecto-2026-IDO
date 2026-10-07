@@ -8,5 +8,44 @@
         <div class="filter-menu" data-status-filter-menu hidden></div>
     </div>
 </div>
-<div class="panel module-panel"><div class="panel-head"><div><h3>{{ $panelTitle }}</h3><p>Información vigente del sistema</p></div><span class="status-pill">Vista general</span></div><div class="table-responsive"><table class="table align-middle" data-table-role="module-table"><thead><tr>@foreach($columns as $column)<th @if(in_array(mb_strtolower($column), ['estado', 'disponibilidad'], true)) data-status-column @endif>{{ $column }}</th>@endforeach</tr></thead><tbody>@foreach($rows as $row)<tr>@foreach($row as $cell)<td>{!! $cell !!}</td>@endforeach</tr>@endforeach</tbody></table></div><div class="pagination-note">Mostrando <span data-record-count>{{ count($rows) }}</span> registros <span><i class="bi bi-chevron-left"></i><b>1</b><i class="bi bi-chevron-right"></i></span></div></div>
+<div class="panel module-panel">
+    <div class="panel-head">
+        <div>
+            <h3>{{ $panelTitle }}</h3>
+            <p>Información vigente del sistema</p>
+        </div>
+        <span class="status-pill">Vista general</span>
+    </div>
+    <div class="table-responsive">
+        <table class="table align-middle" data-table-role="module-table" data-page-size="10">
+            <thead>
+                <tr>
+                    @foreach($columns as $column)
+                        <th @if(in_array(mb_strtolower($column), ['estado', 'disponibilidad'], true)) data-status-column @endif>{{ $column }}</th>
+                    @endforeach
+                </tr>
+            </thead>
+            <tbody>
+                @foreach($rows as $row)
+                    <tr>
+                        @foreach($row as $cell)
+                            <td>{!! $cell !!}</td>
+                        @endforeach
+                    </tr>
+                @endforeach
+            </tbody>
+        </table>
+    </div>
+    <div class="pagination-note" data-table-pagination>
+        <span>
+            Mostrando <span data-range-start>0</span>-<span data-range-end>0</span>
+            de <span data-record-count>{{ count($rows) }}</span> registros
+        </span>
+        <nav class="module-pagination d-flex align-items-center gap-2" aria-label="Paginación de registros">
+            <button type="button" class="btn btn-secondary btn-small" data-page-previous aria-label="Página anterior">Anterior</button>
+            <span data-page-indicator aria-live="polite">1 / 1</span>
+            <button type="button" class="btn btn-secondary btn-small" data-page-next aria-label="Página siguiente">Siguiente</button>
+        </nav>
+    </div>
+</div>
 @endsection
