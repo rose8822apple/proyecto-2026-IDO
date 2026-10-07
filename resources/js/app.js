@@ -270,6 +270,28 @@ const validatePositiveNumber = (input) => {
     return true;
 };
 
+const setupPersonFieldRestrictions = () => {
+    const nameInput = document.querySelector('[data-name-only]');
+    const phoneInput = document.querySelector('[data-numeric-only]');
+
+    const removeMatchingCharacters = (input, pattern) => {
+        input.addEventListener('input', () => {
+            const cursor = input.selectionStart ?? input.value.length;
+            const removedBeforeCursor = input.value.slice(0, cursor).match(pattern)?.join('').length ?? 0;
+            const sanitizedValue = input.value.replace(pattern, '');
+
+            if (sanitizedValue === input.value) return;
+
+            input.value = sanitizedValue;
+            const nextCursor = cursor - removedBeforeCursor;
+            input.setSelectionRange(nextCursor, nextCursor);
+        });
+    };
+
+    if (nameInput) removeMatchingCharacters(nameInput, /[0-9]/g);
+    if (phoneInput) removeMatchingCharacters(phoneInput, /[^0-9]/g);
+};
+
 document.addEventListener('DOMContentLoaded', () => {
     debugLog('Vista cargada', {
         view: document.querySelector('.page-heading h1')?.textContent.trim() || document.title,
@@ -303,6 +325,7 @@ document.addEventListener('DOMContentLoaded', () => {
     setupDashboardActions();
     setupModuleTable();
     setupPersonPreview();
+    setupPersonFieldRestrictions();
     setupNotifications();
 
     document.addEventListener('click', (event) => {

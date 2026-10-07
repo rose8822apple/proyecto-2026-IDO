@@ -269,13 +269,15 @@ class OperationController extends Controller
     public function storePerson(Request $request)
     {
         $validated = $request->validate([
-            'name' => ['required', 'string', 'max:255'],
+            'name' => ['required', 'string', 'max:255', 'not_regex:/[0-9]/'],
             'email' => ['required', 'email', 'max:255', 'unique:people,email'],
             ...$this->cedulaRules($request),
             'role' => ['required', 'string', 'max:100', Rule::in($this->availableRoles())],
             'phone_prefix' => ['nullable', 'required_with:phone_number', Rule::in(self::PHONE_PREFIXES)],
             'phone_number' => ['nullable', 'required_with:phone_prefix', 'digits:7'],
             'status' => ['nullable', 'string', 'max:50'],
+        ], [
+            'name.not_regex' => 'El nombre no puede contener números.',
         ]);
 
         $validated['status'] ??= 'Disponible';
@@ -292,13 +294,15 @@ class OperationController extends Controller
     public function updatePerson(Request $request, Person $person)
     {
         $validated = $request->validate([
-            'name' => ['required', 'string', 'max:255'],
+            'name' => ['required', 'string', 'max:255', 'not_regex:/[0-9]/'],
             'email' => ['required', 'email', 'max:255', Rule::unique('people', 'email')->ignore($person->id)],
             ...$this->cedulaRules($request, $person),
             'role' => ['required', 'string', 'max:100', Rule::in($this->availableRoles())],
             'phone_prefix' => ['nullable', 'required_with:phone_number', Rule::in(self::PHONE_PREFIXES)],
             'phone_number' => ['nullable', 'required_with:phone_prefix', 'digits:7'],
             'status' => ['nullable', 'string', 'max:50'],
+        ], [
+            'name.not_regex' => 'El nombre no puede contener números.',
         ]);
 
         $validated['status'] ??= $person->status ?? 'Disponible';

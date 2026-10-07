@@ -64,6 +64,8 @@ class OperationFormsTest extends TestCase
             ->assertSee('name="phone_prefix"', false)
             ->assertSee('name="phone_number"', false)
             ->assertSee('maxlength="7"', false)
+            ->assertSee('data-numeric-only', false)
+            ->assertSee('data-name-only', false)
             ->assertSee('<label for="cedula_number">Cédula</label>', false)
             ->assertSee('name="cedula_prefix"', false)
             ->assertSee('name="cedula_number"', false)
@@ -994,6 +996,45 @@ class OperationFormsTest extends TestCase
         ])->assertSessionHasErrors(['phone_prefix', 'phone_number']);
 
         $this->assertDatabaseMissing('people', ['email' => 'ana@example.com']);
+    }
+
+    public function test_person_name_and_phone_reject_invalid_characters_on_create_and_update(): void
+    {
+        DB::table('roles')->insert(['nombre' => 'Médico']);
+
+        $this->post('/personal', [
+            'name' => 'Ana2 García',
+            'email' => 'ana@example.com',
+            'role' => 'Médico',
+            'phone_prefix' => '0414',
+            'phone_number' => '123a567',
+            'status' => 'Disponible',
+        ])->assertSessionHasErrors(['name', 'phone_number']);
+
+        $this->assertDatabaseMissing('people', ['email' => 'ana@example.com']);
+
+        $person = Person::query()->create([
+            'name' => 'Ana García',
+            'email' => 'ana@example.com',
+            'role' => 'Médico',
+            'phone' => '04141234567',
+            'status' => 'Disponible',
+        ]);
+
+        $this->put('/personal/'.$person->id, [
+            'name' => 'Ana2 García',
+            'email' => 'ana@example.com',
+            'role' => 'Médico',
+            'phone_prefix' => '0414',
+            'phone_number' => '123a567',
+            'status' => 'Disponible',
+        ])->assertSessionHasErrors(['name', 'phone_number']);
+
+        $this->assertDatabaseHas('people', [
+            'id' => $person->id,
+            'name' => 'Ana García',
+            'phone' => '04141234567',
+        ]);
     }
 
     public function test_operations_can_be_updated_and_deleted(): void

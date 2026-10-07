@@ -62,6 +62,7 @@
                                 maxlength="{{ $field['maxlength'] }}"
                                 pattern="{{ $field['pattern'] }}"
                                 inputmode="{{ $field['inputmode'] }}"
+                                data-numeric-only
                                 aria-label="Resto del número, 7 dígitos"
                             >
                         </div>
@@ -123,6 +124,7 @@
                             value="{{ $value }}"
                             placeholder="{{ $field['placeholder'] ?? '' }}"
                             @if(!empty($field['required'])) required @endif
+                            @if(($field['name'] ?? '') === 'name') pattern="[^0-9]+" data-name-only @endif
                             @if(($field['type'] ?? '') === 'number') step="1" @endif
                             @if(!empty($field['min'])) min="{{ $field['min'] }}" @endif
                             @if(!empty($field['max'])) max="{{ $field['max'] }}" @endif
