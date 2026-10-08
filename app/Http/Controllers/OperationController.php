@@ -7,6 +7,7 @@ use App\Models\Person;
 use App\Models\Shift;
 use App\Models\Site;
 use App\Services\AuditLogger;
+use App\Support\VenezuelaTerritory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -378,14 +379,17 @@ class OperationController extends Controller
     public function storeShift(Request $request)
     {
         $validated = $request->validate([
-            'title' => ['required', 'string', 'max:255'],
+            'title' => ['required', 'string', 'max:255', 'not_regex:/[0-9]/'],
             'site_id' => ['required', 'integer', 'exists:sites,id'],
-            'date' => ['required', 'date'],
+            'date' => ['required', 'date', 'after_or_equal:today'],
             'end_date' => ['required', 'date', 'after_or_equal:date'],
             'start_time' => ['required', 'regex:/^(?:[01][0-9]|2[0-3]):[0-5][0-9](?::[0-5][0-9])?$/'],
             'end_time' => ['required', 'regex:/^(?:[01][0-9]|2[0-3]):[0-5][0-9](?::[0-5][0-9])?$/'],
             'status' => ['required', 'string', 'max:50'],
         ], [
+            'title.not_regex' => 'El nombre no puede contener números.',
+            'date.after_or_equal' => 'La fecha de inicio no puede ser anterior a hoy.',
+            'end_date.after_or_equal' => 'La fecha de fin debe ser igual o posterior a la fecha de inicio.',
             'start_time.regex' => 'La hora de inicio debe tener el formato HH:mm.',
             'end_time.regex' => 'La hora de fin debe tener el formato HH:mm.',
         ]);
@@ -401,14 +405,17 @@ class OperationController extends Controller
     public function updateShift(Request $request, Shift $shift)
     {
         $validated = $request->validate([
-            'title' => ['required', 'string', 'max:255'],
+            'title' => ['required', 'string', 'max:255', 'not_regex:/[0-9]/'],
             'site_id' => ['required', 'integer', 'exists:sites,id'],
-            'date' => ['required', 'date'],
+            'date' => ['required', 'date', 'after_or_equal:today'],
             'end_date' => ['required', 'date', 'after_or_equal:date'],
             'start_time' => ['required', 'regex:/^(?:[01][0-9]|2[0-3]):[0-5][0-9](?::[0-5][0-9])?$/'],
             'end_time' => ['required', 'regex:/^(?:[01][0-9]|2[0-3]):[0-5][0-9](?::[0-5][0-9])?$/'],
             'status' => ['required', 'string', 'max:50'],
         ], [
+            'title.not_regex' => 'El nombre no puede contener números.',
+            'date.after_or_equal' => 'La fecha de inicio no puede ser anterior a hoy.',
+            'end_date.after_or_equal' => 'La fecha de fin debe ser igual o posterior a la fecha de inicio.',
             'start_time.regex' => 'La hora de inicio debe tener el formato HH:mm.',
             'end_time.regex' => 'La hora de fin debe tener el formato HH:mm.',
         ]);
@@ -434,45 +441,38 @@ class OperationController extends Controller
 
     public function createSite()
     {
+        $fields = $this->siteFields();
+
         return view('operations.create', [
             'title' => 'Registrar sede',
             'description' => 'Agrega una sede activa a la red operativa.',
             'action' => route('sites.store'),
             'submitText' => 'Guardar sede',
-            'fields' => $this->buildFields([
-                ['name' => 'name', 'label' => 'Nombre', 'type' => 'text', 'placeholder' => 'Hospital San Gabriel', 'required' => true],
-                ['name' => 'type', 'label' => 'Tipo', 'type' => 'select', 'options' => ['Hospital' => 'Hospital', 'Refugio' => 'Refugio', 'Clínica' => 'Clínica', 'Otro' => 'Otro'], 'required' => true],
-                ['name' => 'municipality', 'label' => 'Municipio', 'type' => 'text', 'placeholder' => 'San Miguel', 'required' => true],
-                ['name' => 'status', 'label' => 'Estado', 'type' => 'select', 'options' => ['Operativa' => 'Operativa', 'En revisión' => 'En revisión', 'Inactiva' => 'Inactiva'], 'required' => true],
-            ]),
+            'fields' => $fields,
+            'territoryCatalog' => VenezuelaTerritory::catalog(),
+            'isSiteForm' => true,
         ]);
     }
 
     public function editSite(Site $site)
     {
+        $fields = $this->siteFields($site);
+
         return view('operations.create', [
             'title' => 'Editar sede',
             'description' => 'Actualiza la información operativa de la sede.',
             'action' => route('sites.update', $site),
             'submitText' => 'Actualizar sede',
             'method' => 'PUT',
-            'fields' => $this->buildFields([
-                ['name' => 'name', 'label' => 'Nombre', 'type' => 'text', 'placeholder' => 'Hospital San Gabriel', 'required' => true],
-                ['name' => 'type', 'label' => 'Tipo', 'type' => 'select', 'options' => ['Hospital' => 'Hospital', 'Refugio' => 'Refugio', 'Clínica' => 'Clínica', 'Otro' => 'Otro'], 'required' => true],
-                ['name' => 'municipality', 'label' => 'Municipio', 'type' => 'text', 'placeholder' => 'San Miguel', 'required' => true],
-                ['name' => 'status', 'label' => 'Estado', 'type' => 'select', 'options' => ['Operativa' => 'Operativa', 'En revisión' => 'En revisión', 'Inactiva' => 'Inactiva'], 'required' => true],
-            ], $site),
+            'fields' => $fields,
+            'territoryCatalog' => VenezuelaTerritory::catalog(),
+            'isSiteForm' => true,
         ]);
     }
 
     public function storeSite(Request $request)
     {
-        $validated = $request->validate([
-            'name' => ['required', 'string', 'max:255'],
-            'type' => ['required', 'string', 'max:100'],
-            'municipality' => ['required', 'string', 'max:120'],
-            'status' => ['required', 'string', 'max:50'],
-        ]);
+        $validated = $this->validateSite($request);
 
         DB::transaction(function () use ($validated): void {
             $site = Site::create($validated);
@@ -484,12 +484,7 @@ class OperationController extends Controller
 
     public function updateSite(Request $request, Site $site)
     {
-        $validated = $request->validate([
-            'name' => ['required', 'string', 'max:255'],
-            'type' => ['required', 'string', 'max:100'],
-            'municipality' => ['required', 'string', 'max:120'],
-            'status' => ['required', 'string', 'max:50'],
-        ]);
+        $validated = $this->validateSite($request, $site);
 
         DB::transaction(function () use ($site, $validated): void {
             $before = $site->getAttributes();
@@ -498,6 +493,82 @@ class OperationController extends Controller
         });
 
         return redirect()->route('sites')->with('success', 'Sede actualizada correctamente.');
+    }
+
+    private function siteFields(?Site $site = null): array
+    {
+        $state = old('state', $site?->state);
+        $municipalities = VenezuelaTerritory::municipalitiesFor($state);
+        $municipality = old('municipality', $site?->municipality);
+        $isLegacyLocation = $site && ! $site->state;
+
+        if ($isLegacyLocation && $site->municipality) {
+            $municipalities = [$site->municipality, ...$municipalities];
+            $municipalities = array_values(array_unique($municipalities));
+        }
+
+        $parishes = VenezuelaTerritory::parishesFor($state, $municipality);
+
+        return $this->buildFields([
+            ['name' => 'name', 'label' => 'Nombre', 'type' => 'text', 'placeholder' => 'Hospital San Gabriel', 'required' => true],
+            ['name' => 'type', 'label' => 'Tipo', 'type' => 'select', 'options' => ['Hospital' => 'Hospital', 'Refugio' => 'Refugio', 'Clínica' => 'Clínica', 'Otro' => 'Otro'], 'required' => true],
+            ['name' => 'state', 'label' => 'Estado', 'type' => 'territory_state', 'options' => array_combine(VenezuelaTerritory::states(), VenezuelaTerritory::states()), 'required' => ! $isLegacyLocation, 'help_text' => $isLegacyLocation ? 'Esta sede conserva un municipio anterior al catálogo. Puedes guardarla sin cambiarlo o elegir un estado para actualizar su ubicación.' : null],
+            ['name' => 'municipality', 'label' => 'Municipio', 'type' => 'territory_municipality', 'options' => array_combine($municipalities, $municipalities) ?: [], 'required' => true, 'disabled' => $municipalities === []],
+            ['name' => 'parish', 'label' => 'Parroquia', 'type' => 'territory_parish', 'options' => array_combine($parishes, $parishes) ?: [], 'disabled' => $parishes === []],
+            ['name' => 'status', 'label' => 'Estado operativo', 'type' => 'select', 'options' => ['Operativa' => 'Operativa', 'En revisión' => 'En revisión', 'Inactiva' => 'Inactiva'], 'required' => true],
+        ], $site);
+    }
+
+    private function validateSite(Request $request, ?Site $site = null): array
+    {
+        $state = $request->input('state');
+        $municipality = $request->input('municipality');
+        $isUnchangedLegacyLocation = $site
+            && ! $site->state
+            && blank($state)
+            && $municipality === $site->municipality;
+        $stateRules = $isUnchangedLegacyLocation
+            ? ['nullable', 'string']
+            : ['required', 'string', Rule::in(VenezuelaTerritory::states())];
+        $parishes = VenezuelaTerritory::parishesFor(
+            is_string($state) ? $state : null,
+            is_string($municipality) ? $municipality : null,
+        );
+
+        $validated = $request->validate([
+            'name' => ['required', 'string', 'max:255', 'not_regex:/[0-9]/'],
+            'type' => ['required', 'string', 'max:100'],
+            'state' => $stateRules,
+            'municipality' => ['required', 'string', 'max:120', 'not_regex:/[0-9]/'],
+            'parish' => $isUnchangedLegacyLocation || $parishes === []
+                ? ['nullable', 'string', 'max:120']
+                : ['required', 'string', 'max:120', Rule::in($parishes)],
+            'status' => ['required', 'string', 'max:50'],
+        ], [
+            'name.not_regex' => 'El nombre no puede contener números.',
+            'municipality.not_regex' => 'El municipio no puede contener números.',
+        ]);
+
+        if ($isUnchangedLegacyLocation) {
+            $validated['state'] = null;
+            $validated['parish'] = null;
+
+            return $validated;
+        }
+
+        if (! in_array($municipality, VenezuelaTerritory::municipalitiesFor($state), true)) {
+            throw ValidationException::withMessages([
+                'municipality' => 'Selecciona un municipio que pertenezca al estado indicado.',
+            ]);
+        }
+
+        if ($parishes === [] && filled($request->input('parish'))) {
+            throw ValidationException::withMessages([
+                'parish' => 'El municipio seleccionado no tiene parroquias disponibles en el catálogo.',
+            ]);
+        }
+
+        return $validated;
     }
 
     public function destroySite(Site $site)

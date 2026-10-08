@@ -1,0 +1,23 @@
+.dashboard-summary-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    max-width: 960px;
+    margin-inline: auto;
+}
+
+.dashboard-summary-grid .stat-card {
+    text-align: center;
+}
+
+.dashboard-summary-grid .stat-icon {
+    margin-inline: auto;
+}
+
+.operational-stats-panel {
+    margin-top: 30px;
+}
+
+@media (max-width: 600px) {
+    .dashboard-summary-grid {
+        grid-template-columns: 1fr;
+    }
+}

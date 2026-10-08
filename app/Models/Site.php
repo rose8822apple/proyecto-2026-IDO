@@ -12,7 +12,9 @@ class Site extends Model
     protected $fillable = [
         'name',
         'type',
+        'state',
         'municipality',
+        'parish',
         'coverage',
         'status',
         'code',

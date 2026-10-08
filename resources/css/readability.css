@@ -1,0 +1,77 @@
+:root {
+    --muted: #1f2937;
+}
+
+.sidebar-label,
+.audit-empty {
+    color: #1f2937;
+}
+
+.nav-link,
+.topbar-actions {
+    color: #1f2937;
+}
+
+.lead-copy,
+.stat-card span,
+.stat-card .neutral,
+.stat-card small em,
+.text-muted {
+    color: #1f2937 !important;
+}
+
+.status-pill {
+    color: #4e765a;
+}
+
+.main-content {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
+.page-container {
+    flex: 1 0 auto;
+    width: 100%;
+}
+
+.site-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+    padding: 18px 4.5%;
+    border-top: 1px solid var(--line);
+    background: #fff;
+}
+
+.site-footer-copyright {
+    margin: 0;
+    color: var(--muted);
+    font-size: 12px;
+}
+
+.site-footer-links {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
+.site-footer-links a {
+    display: inline-flex;
+    color: var(--muted);
+    font-size: 18px;
+    transition: color 0.2s ease;
+}
+
+.site-footer-links a:hover {
+    color: var(--red);
+}
+
+@media (max-width: 700px) {
+    .site-footer {
+        align-items: flex-start;
+        flex-direction: column;
+        gap: 12px;
+    }
+}

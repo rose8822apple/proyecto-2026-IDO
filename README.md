@@ -72,7 +72,7 @@ Aplicación Laravel 12 para administrar personal, sedes, turnos y disponibilidad
 1. Instala dependencias con `composer install` y `npm install`.
 2. Copia `.env.example` como `.env` y genera la clave con `php artisan key:generate`.
 3. Configura `DB_CONNECTION=mysql`, `DB_HOST`, `DB_PORT`, `DB_DATABASE`, `DB_USERNAME` y `DB_PASSWORD` en `.env`.
-4. En una base de datos nueva, ejecuta `php artisan migrate` para crear las tablas del proyecto. Si conectas una base existente, revisa primero las tablas y el historial de migraciones; no vuelvas a crear tablas que ya existan. La tabla `roles` debe tener una columna `nombre`; el selector consulta sus registros y no mantiene una lista estática.
+4. En una base de datos nueva, ejecuta `php artisan migrate` para crear las tablas del proyecto, incluida `roles`, que comienza vacía. Administra las opciones desde **Roles** en el menú: solo los registros guardados allí aparecen en el selector de personal. Los roles que ya estén asignados a personas no se pueden eliminar hasta que dejen de usarse. Si conectas una base existente, revisa primero las tablas y el historial de migraciones; no vuelvas a crear tablas que ya existan.
 5. Inicia el servidor con `php artisan serve` y Vite, en otra terminal, con `npm run dev`. Abre `http://127.0.0.1:8000`.
 
 En XAMPP, si PHP no está en el `PATH`, ejecuta los comandos Artisan con `C:\xampp\php\php.exe`. Si la base de datos usa otra estructura existente, respalda la base y verifica las migraciones antes de ejecutarlas.
@@ -83,8 +83,10 @@ En XAMPP, si PHP no está en el `PATH`, ejecuta los comandos Artisan con `C:\xam
 - CRUD de personal, sedes, turnos y disponibilidad: listados, formularios de alta/edición y eliminación.
 - Las tablas operativas heredadas en español se consolidan en el esquema actual mediante la migración `2026_10_03_000006_consolidate_legacy_operational_tables`; conserva registros y relaciones, añade columnas para los campos históricos y requiere respaldo antes de migrar.
 - Auditoría de solo lectura en `/auditoria`, con filtros por módulo, acción, fechas y búsqueda; registra cambios antes/después desde la migración en adelante.
-- Selector de rol cargado en cada formulario desde `roles.nombre`; la validación del servidor rechaza roles que no estén en esa tabla.
+- Selector de rol cargado exclusivamente desde `roles.nombre`; la validación del servidor rechaza roles que no estén en esa tabla. Los roles se pueden agregar y eliminar desde la sección Roles, y los asignados a personas quedan protegidos.
+- El formulario de sedes encadena estado, municipio y parroquia con el catálogo de división político-territorial de Venezuela. Los municipios se validan contra su estado y las parroquias contra su municipio; las sedes históricas sin estado conservan su ubicación actual hasta que se seleccione una del catálogo. El catálogo se atribuye a [Edutherz/venezuela-data](https://github.com/EdutherZ/venezuela-data), que declara como fuentes a `marydn/venezuela-sql` y `zokeber/venezuela-json`; dos municipios no incluyen parroquias en los datos.
 - Selectores de sede y personal alimentados con registros existentes.
+- Los campos de nombre no aceptan números y las fechas de turnos no pueden ser anteriores al día actual; estas reglas se validan en el navegador y también en el servidor.
 - Formularios con mensajes de validación y controles de entrada para valores numéricos.
 - Pruebas de integración para formularios, validación de cobertura y operaciones CRUD.
 
@@ -93,7 +95,7 @@ En XAMPP, si PHP no está en el `PATH`, ejecuta los comandos Artisan con `C:\xam
 - **Resumen (`/dashboard`)**: muestra el total de turnos, personas y sedes, agrupa personal y sedes por estado, y presenta alertas operativas con enlaces para revisar turnos o gestionar disponibilidad.
 - **Turnos (`/turnos`)**: lista cada turno con su sede, rango de fecha de inicio/fin, horario y estado. Permite buscar, filtrar por estado y acceder a las acciones de alta, edición y eliminación. La fecha forma parte del turno.
 - **Personal (`/personal`)**: muestra personas, roles y su estado de disponibilidad más reciente. Permite buscar por datos visibles o cédula, filtrar por disponibilidad y administrar los registros. La disponibilidad se administra desde su propio módulo.
-- **Sedes activas (`/sedes`)**: presenta sedes, tipo, municipio y estado operativo, con opciones para buscar, filtrar por estado, registrar, editar y eliminar.
+- **Sedes activas (`/sedes`)**: presenta sedes, tipo, municipio, parroquia, estado y estado operativo, con opciones para buscar, filtrar por estado, registrar, editar y eliminar.
 - **Disponibilidad (`/disponibilidad`)**: relaciona personas con turnos y su estado de disponibilidad. Permite buscar y filtrar por estado. La disponibilidad toma la fecha de inicio y el horario del turno seleccionado; los cambios se reflejan también en Personal y Resumen.
 - **Auditoría (`/auditoria`)**: consulta de solo lectura de cambios, con filtros aplicables por botón para módulo, acción, intervalo de fechas y búsqueda. Muestra quién realizó el cambio y los valores anteriores y nuevos disponibles.
 - **Formularios de operación**: las pantallas de alta y edición de personal, turnos, sedes y disponibilidad comparten un formulario que valida y guarda los datos correspondientes; permiten cancelar y regresar a la vista anterior.

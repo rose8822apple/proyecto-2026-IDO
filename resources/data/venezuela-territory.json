@@ -1,0 +1,1866 @@
+{
+    "source":  "https://github.com/EdutherZ/venezuela-data (autoría: Edutherz; fuentes declaradas: marydn/venezuela-sql y zokeber/venezuela-json)",
+    "entities":  {
+                     "Amazonas":  {
+                                      "Alto Orinoco":  [
+                                                           "Alto Orinoco",
+                                                           "Huachamacare Acanaña",
+                                                           "Marawaka Toky Shamanaña",
+                                                           "Mavaka Mavaka",
+                                                           "Sierra Parima Parimabé"
+                                                       ],
+                                      "Atabapo":  [
+                                                      "Caname Guarinuma",
+                                                      "Ucata Laja Lisa",
+                                                      "Yapacana Macuruco"
+                                                  ],
+                                      "Atures":  [
+                                                     "Fernando Girón Tovar",
+                                                     "Luis Alberto Gómez",
+                                                     "Pahueña Limón de Parhueña",
+                                                     "Platanillal Platanillal"
+                                                 ],
+                                      "Autana":  [
+                                                     "Guayapo",
+                                                     "Munduapo",
+                                                     "Samariapo",
+                                                     "Sipapo"
+                                                 ],
+                                      "Manapiare":  [
+                                                        "Alto Ventuari",
+                                                        "Bajo Ventuari",
+                                                        "Medio Ventuari"
+                                                    ],
+                                      "Maroa":  [
+                                                    "Comunidad",
+                                                    "Victorino"
+                                                ],
+                                      "Río Negro":  [
+                                                        "Casiquiare",
+                                                        "Cocuy",
+                                                        "San Carlos de Río Negro",
+                                                        "Solano"
+                                                    ]
+                                  },
+                     "Anzoátegui":  {
+                                        "Anaco":  [
+                                                      "Anaco",
+                                                      "San Joaquín"
+                                                  ],
+                                        "Aragua":  [
+                                                       "Aragua de Barcelona",
+                                                       "Cachipo"
+                                                   ],
+                                        "Diego Bautista Urbaneja":  [
+                                                                        "El Morro",
+                                                                        "Lechería"
+                                                                    ],
+                                        "Fernando Peñalver":  [
+                                                                  "Puerto Píritu",
+                                                                  "San Miguel",
+                                                                  "Sucre"
+                                                              ],
+                                        "Francisco de Miranda":  [
+                                                                     "Atapirire",
+                                                                     "Boca del Pao",
+                                                                     "El Pao",
+                                                                     "Pariaguán"
+                                                                 ],
+                                        "Francisco Del Carmen Carvajal":  [
+                                                                              "Santa Bárbara",
+                                                                              "Valle de Guanape"
+                                                                          ],
+                                        "General Sir Arthur McGregor":  [
+                                                                            "Calatrava",
+                                                                            "El Chaparro",
+                                                                            "Tomás Alfaro"
+                                                                        ],
+                                        "Guanta":  [
+                                                       "Chorrerón",
+                                                       "Guanta"
+                                                   ],
+                                        "Independencia":  [
+                                                              "Mamo",
+                                                              "Soledad"
+                                                          ],
+                                        "José Gregorio Monagas":  [
+                                                                      "Mapire",
+                                                                      "Piar",
+                                                                      "San Diego de Cabrutica",
+                                                                      "Santa Clara",
+                                                                      "Uverito",
+                                                                      "Zuata"
+                                                                  ],
+                                        "Juan Antonio Sotillo":  [
+                                                                     "Pozuelos",
+                                                                     "Puerto La Cruz"
+                                                                 ],
+                                        "Juan Manuel Cajigal":  [
+                                                                    "Onoto",
+                                                                    "San Pablo"
+                                                                ],
+                                        "Libertad":  [
+                                                         "El Carito",
+                                                         "La Romereña",
+                                                         "San Mateo",
+                                                         "Santa Inés"
+                                                     ],
+                                        "Manuel Ezequiel Bruzual":  [
+                                                                        "Clarines",
+                                                                        "Guanape",
+                                                                        "Sabana de Uchire"
+                                                                    ],
+                                        "Pedro María Freites":  [
+                                                                    "Cantaura",
+                                                                    "Libertador",
+                                                                    "Santa Rosa",
+                                                                    "Urica"
+                                                                ],
+                                        "Píritu":  [
+                                                       "Píritu",
+                                                       "San Francisco"
+                                                   ],
+                                        "San José de Guanipa":  [
+                                                                    "San José de Guanipa"
+                                                                ],
+                                        "San Juan de Capistrano":  [
+                                                                       "Boca de Chávez",
+                                                                       "Boca de Uchire"
+                                                                   ],
+                                        "Santa Ana":  [
+                                                          "Pueblo Nuevo",
+                                                          "Santa Ana"
+                                                      ],
+                                        "Simón Bolívar":  [
+                                                              "Bergantín",
+                                                              "Caigua",
+                                                              "El Carmen",
+                                                              "El Pilar",
+                                                              "Naricual",
+                                                              "San Crsitóbal"
+                                                          ],
+                                        "Simón Rodríguez":  [
+                                                                "Edmundo Barrios",
+                                                                "Miguel Otero Silva"
+                                                            ]
+                                    },
+                     "Apure":  {
+                                   "Achaguas":  [
+                                                    "Achaguas",
+                                                    "Apurito",
+                                                    "El Yagual",
+                                                    "Guachara",
+                                                    "Mucuritas",
+                                                    "Queseras del medio"
+                                                ],
+                                   "Biruaca":  [
+                                                   "Biruaca"
+                                               ],
+                                   "Muñóz":  [
+                                                 "Bruzual",
+                                                 "Mantecal",
+                                                 "Quintero",
+                                                 "Rincón Hondo",
+                                                 "San Vicente"
+                                             ],
+                                   "Páez":  [
+                                                "Aramendi",
+                                                "El Amparo",
+                                                "Guasdualito",
+                                                "San Camilo",
+                                                "Urdaneta"
+                                            ],
+                                   "Pedro Camejo":  [
+                                                        "Codazzi",
+                                                        "Cunaviche",
+                                                        "San Juan de Payara"
+                                                    ],
+                                   "Rómulo Gallegos":  [
+                                                           "Elorza",
+                                                           "La Trinidad"
+                                                       ],
+                                   "San Fernando":  [
+                                                        "El Recreo",
+                                                        "Peñalver",
+                                                        "San Fernando",
+                                                        "San Rafael de Atamaica"
+                                                    ]
+                               },
+                     "Aragua":  {
+                                    "Atanasio Girardot":  [
+                                                              "Andrés Eloy Blanco",
+                                                              "Choroní",
+                                                              "Joaquín Crespo",
+                                                              "José Casanova Godoy",
+                                                              "Las Delicias",
+                                                              "Los Tacarigua",
+                                                              "Madre María de San José",
+                                                              "Pedro José Ovalles"
+                                                          ],
+                                    "Bolívar":  [
+                                                    "Bolívar"
+                                                ],
+                                    "Camatagua":  [
+                                                      "Camatagua",
+                                                      "Carmen de Cura"
+                                                  ],
+                                    "Francisco Linares Alcántara":  [
+                                                                        "Francisco de Miranda",
+                                                                        "Moseñor Feliciano González",
+                                                                        "Santa Rita"
+                                                                    ],
+                                    "José Ángel Lamas":  [
+                                                             "Santa Cruz"
+                                                         ],
+                                    "José Félix Ribas":  [
+                                                             "Castor Nieves Ríos",
+                                                             "José Félix Ribas",
+                                                             "Las Guacamayas",
+                                                             "Pao de Zárate",
+                                                             "Zuata"
+                                                         ],
+                                    "José Rafael Revenga":  [
+                                                                "José Rafael Revenga"
+                                                            ],
+                                    "Libertador":  [
+                                                       "Palo Negro",
+                                                       "San Martín de Porres"
+                                                   ],
+                                    "Mario Briceño Iragorry":  [
+                                                                   "Caña de Azúcar",
+                                                                   "El Limón"
+                                                               ],
+                                    "Ocumare de la Costa de Oro":  [
+                                                                       "Ocumare de la Costa"
+                                                                   ],
+                                    "San Casimiro":  [
+                                                         "Güiripa",
+                                                         "Ollas de Caramacate",
+                                                         "San Casimiro",
+                                                         "Valle Morín"
+                                                     ],
+                                    "San Sebastián":  [
+                                                          "San Sebastían"
+                                                      ],
+                                    "Santiago Mariño":  [
+                                                            "Alfredo Pacheco Miranda",
+                                                            "Arevalo Aponte",
+                                                            "Chuao",
+                                                            "Samán de Güere",
+                                                            "Turmero"
+                                                        ],
+                                    "Santos Michelena":  [
+                                                             "Santos Michelena",
+                                                             "Tiara"
+                                                         ],
+                                    "Sucre":  [
+                                                  "Bella Vista",
+                                                  "Cagua"
+                                              ],
+                                    "Tovar":  [
+                                                  "Tovar"
+                                              ],
+                                    "Urdaneta":  [
+                                                     "Las Peñitas",
+                                                     "San Francisco de Cara",
+                                                     "Taguay",
+                                                     "Urdaneta"
+                                                 ],
+                                    "Zamora":  [
+                                                   "Augusto Mijares",
+                                                   "Magdaleno",
+                                                   "San Francisco de Asís",
+                                                   "Valles de Tucutunemo",
+                                                   "Zamora"
+                                               ]
+                                },
+                     "Barinas":  {
+                                     "Alberto Arvelo Torrealba":  [
+                                                                      "Juan Antonio Rodríguez Domínguez",
+                                                                      "Sabaneta"
+                                                                  ],
+                                     "Andrés Eloy Blanco":  [
+                                                                "El Cantón",
+                                                                "Puerto Vivas",
+                                                                "Santa Cruz de Guacas"
+                                                            ],
+                                     "Antonio José de Sucre":  [
+                                                                   "Andrés Bello",
+                                                                   "Nicolás Pulido",
+                                                                   "Ticoporo"
+                                                               ],
+                                     "Arismendi":  [
+                                                       "Arismendi",
+                                                       "Guadarrama",
+                                                       "La Unión",
+                                                       "San Antonio"
+                                                   ],
+                                     "Barinas":  [
+                                                     "Alberto Arvelo Larriva",
+                                                     "Alto Barinas",
+                                                     "Barinas",
+                                                     "Corazón de Jesús",
+                                                     "Dominga Ortiz de Páez",
+                                                     "El Carmen",
+                                                     "Juan Antonio Rodríguez Domínguez",
+                                                     "Manuel Palacio Fajardo",
+                                                     "Ramón Ignacio Méndez",
+                                                     "Rómulo Betancourt",
+                                                     "San Silvestre",
+                                                     "Santa Inés",
+                                                     "Santa Lucía",
+                                                     "Torumos"
+                                                 ],
+                                     "Bolívar":  [
+                                                     "Altamira de Cáceres",
+                                                     "Barinitas",
+                                                     "Calderas"
+                                                 ],
+                                     "Cruz Paredes":  [
+                                                          "Barrancas",
+                                                          "El Socorro",
+                                                          "Mazparrito"
+                                                      ],
+                                     "Ezequiel Zamora":  [
+                                                             "José Ignacio del Pumar",
+                                                             "Pedro Briceño Méndez",
+                                                             "Ramón Ignacio Méndez",
+                                                             "Santa Bárbara"
+                                                         ],
+                                     "Obispos":  [
+                                                     "El Real",
+                                                     "Guasimitos",
+                                                     "La Luz",
+                                                     "Obispos"
+                                                 ],
+                                     "Pedraza":  [
+                                                     "Ciudad Bolívia",
+                                                     "José Félix Ribas",
+                                                     "José Ignacio Briceño",
+                                                     "Páez"
+                                                 ],
+                                     "Rojas":  [
+                                                   "Dolores",
+                                                   "Libertad",
+                                                   "Palacio Fajardo",
+                                                   "Santa Rosa"
+                                               ],
+                                     "Sosa":  [
+                                                  "Ciudad de Nutrias",
+                                                  "El Regalo",
+                                                  "Puerto Nutrias",
+                                                  "Santa Catalina"
+                                              ]
+                                 },
+                     "Bolívar":  {
+                                     "Angostura (Raúl Leoni)":  [
+                                                                    "Barceloneta",
+                                                                    "Raúl Leoni",
+                                                                    "San Francisco",
+                                                                    "Santa Bárbara"
+                                                                ],
+                                     "Caroní":  [
+                                                    "5 de Julio",
+                                                    "Cachamay",
+                                                    "Chirica",
+                                                    "Dalla Costa",
+                                                    "Once de Abril",
+                                                    "Pozo Verde",
+                                                    "Simón Bolívar",
+                                                    "Unare",
+                                                    "Universidad",
+                                                    "Vista al Sol",
+                                                    "Yocoima"
+                                                ],
+                                     "Cedeño":  [
+                                                    "Altagracia",
+                                                    "Ascensión Farreras",
+                                                    "Cedeño",
+                                                    "Guaniamo",
+                                                    "La Urbana",
+                                                    "Pijiguaos"
+                                                ],
+                                     "El Callao":  [
+                                                       "El Callao"
+                                                   ],
+                                     "Gran Sabana":  [
+                                                         "Gran Sabana",
+                                                         "Ikabarú"
+                                                     ],
+                                     "Heres":  [
+                                                   "Agua Salada",
+                                                   "Catedral",
+                                                   "José Antonio Páez",
+                                                   "La Sabanita",
+                                                   "Marhuanta",
+                                                   "Orinoco",
+                                                   "Panapana",
+                                                   "Vista Hermosa",
+                                                   "Zea"
+                                               ],
+                                     "Padre Pedro Chien":  [
+                                                               "Padre Pedro Chien",
+                                                               "Río Grande"
+                                                           ],
+                                     "Piar":  [
+                                                  "Andrés Eloy Blanco",
+                                                  "Pedro Cova"
+                                              ],
+                                     "Roscio":  [
+                                                    "Roscio",
+                                                    "Salóm"
+                                                ],
+                                     "Sifontes":  [
+                                                      "Dalla Costa",
+                                                      "San Isidro",
+                                                      "Sifontes"
+                                                  ],
+                                     "Sucre":  [
+                                                   "Aripao",
+                                                   "Guarataro",
+                                                   "Las Majadas",
+                                                   "Moitaco",
+                                                   "Sucre"
+                                               ]
+                                 },
+                     "Carabobo":  {
+                                      "Bejuma":  [
+                                                     "Bejuma",
+                                                     "Canoabo",
+                                                     "Simón Bolívar"
+                                                 ],
+                                      "Carlos Arvelo":  [
+                                                            "Carabobo",
+                                                            "Güigüe",
+                                                            "Tacarigua"
+                                                        ],
+                                      "Diego Ibarra":  [
+                                                           "Aguas Calientes",
+                                                           "Mariara"
+                                                       ],
+                                      "Guacara":  [
+                                                      "Ciudad Alianza",
+                                                      "Guacara",
+                                                      "Yagua"
+                                                  ],
+                                      "Juan José Mora":  [
+                                                             "Morón",
+                                                             "Yagua"
+                                                         ],
+                                      "Libertador":  [
+                                                         "Independencia",
+                                                         "Tocuyito"
+                                                     ],
+                                      "Los Guayos":  [
+                                                         "Los Guayos"
+                                                     ],
+                                      "Miranda":  [
+                                                      "Miranda"
+                                                  ],
+                                      "Montalbán":  [
+                                                        "Montalbán"
+                                                    ],
+                                      "Naguanagua":  [
+                                                         "Naguanagua"
+                                                     ],
+                                      "Puerto Cabello":  [
+                                                             "Bartolomé Salóm",
+                                                             "Borburata",
+                                                             "Democracia",
+                                                             "Fraternidad",
+                                                             "Goaigoaza",
+                                                             "Juan José Flores",
+                                                             "Patanemo",
+                                                             "Unión"
+                                                         ],
+                                      "San Diego":  [
+                                                        "San Diego"
+                                                    ],
+                                      "San Joaquín":  [
+                                                          "San Joaquín"
+                                                      ],
+                                      "Valencia":  [
+                                                       "Candelaria",
+                                                       "Catedral",
+                                                       "El Socorro",
+                                                       "Miguel Peña",
+                                                       "Negro Primero",
+                                                       "Rafael Urdaneta",
+                                                       "San Blas",
+                                                       "San José",
+                                                       "Santa Rosa"
+                                                   ]
+                                  },
+                     "Cojedes":  {
+                                     "Anzoátegui":  [
+                                                        "Cojedes",
+                                                        "Juan de Mata Suárez"
+                                                    ],
+                                     "Girardot":  [
+                                                      "El Baúl",
+                                                      "Sucre"
+                                                  ],
+                                     "Lima Blanco":  [
+                                                         "La Aguadita",
+                                                         "Macapo"
+                                                     ],
+                                     "Pao de San Juan Bautista":  [
+                                                                      "El Pao"
+                                                                  ],
+                                     "Ricaurte":  [
+                                                      "El Amparo",
+                                                      "Libertad de Cojedes"
+                                                  ],
+                                     "Rómulo Gallegos":  [
+                                                             "Rómulo Gallegos"
+                                                         ],
+                                     "San Carlos":  [
+                                                        "Juan Ángel Bravo",
+                                                        "Manuel Manrique",
+                                                        "San Carlos de Austria"
+                                                    ],
+                                     "Tinaco":  [
+                                                    "General en Jefe José Laurencio Silva"
+                                                ],
+                                     "Tinaquillo":  [
+                                                        "Tinaquillo"
+                                                    ]
+                                 },
+                     "Delta Amacuro":  {
+                                           "Antonio Díaz":  [
+                                                                "Almirante Luis Brión",
+                                                                "Curiapo",
+                                                                "Francisco Aniceto Lugo",
+                                                                "Manuel Renaud",
+                                                                "Padre Barral",
+                                                                "Santos de Abelgas"
+                                                            ],
+                                           "Casacoima":  [
+                                                             "Cinco de Julio",
+                                                             "Imataca",
+                                                             "Juan Bautista Arismendi",
+                                                             "Manuel Piar",
+                                                             "Rómulo Gallegos"
+                                                         ],
+                                           "Pedernales":  [
+                                                              "Luis Beltrán Prieto Figueroa",
+                                                              "Pedernales"
+                                                          ],
+                                           "Tucupita":  [
+                                                            "José Vidal Marcano",
+                                                            "Juan Millán",
+                                                            "Leonardo Ruíz Pineda",
+                                                            "Mariscal Antonio José de Sucre",
+                                                            "Monseñor Argimiro García",
+                                                            "San José (Delta Amacuro)",
+                                                            "San Rafael (Delta Amacuro)",
+                                                            "Virgen del Valle"
+                                                        ]
+                                       },
+                     "Dependencias Federales":  {
+
+                                                },
+                     "Distrito Capital":  {
+                                              "Libertador":  [
+                                                                 "23 de enero",
+                                                                 "Altagracia",
+                                                                 "Antímano",
+                                                                 "Caricuao",
+                                                                 "Catedral",
+                                                                 "Coche",
+                                                                 "El Junquito",
+                                                                 "El Paraíso",
+                                                                 "El Recreo",
+                                                                 "El Valle",
+                                                                 "La Candelaria",
+                                                                 "La Pastora",
+                                                                 "La Vega",
+                                                                 "Macarao",
+                                                                 "San Agustín",
+                                                                 "San Bernardino",
+                                                                 "San José",
+                                                                 "San Juan",
+                                                                 "San Pedro",
+                                                                 "Santa Rosalía",
+                                                                 "Santa Teresa",
+                                                                 "Sucre (Catia)"
+                                                             ]
+                                          },
+                     "Falcón":  {
+                                    "Acosta":  [
+                                                   "Capadare",
+                                                   "La Pastora",
+                                                   "Libertador",
+                                                   "San Juan de los Cayos"
+                                               ],
+                                    "Bolívar":  [
+                                                    "Aracua",
+                                                    "La Peña",
+                                                    "San Luis"
+                                                ],
+                                    "Buchivacoa":  [
+                                                       "Bariro",
+                                                       "Borojó",
+                                                       "Capatárida",
+                                                       "Guajiro",
+                                                       "Seque",
+                                                       "Valle de Eroa",
+                                                       "Zazárida"
+                                                   ],
+                                    "Cacique Manaure":  [
+                                                            "Cacique Manaure"
+                                                        ],
+                                    "Carirubana":  [
+                                                       "Carirubana",
+                                                       "Norte",
+                                                       "Santa Ana",
+                                                       "Urbana Punta Cardón"
+                                                   ],
+                                    "Colina":  [
+                                                   "Acurigua",
+                                                   "Guaibacoa",
+                                                   "La Vela de Coro",
+                                                   "Las Calderas",
+                                                   "Macoruca"
+                                               ],
+                                    "Dabajuro":  [
+                                                     "Dabajuro"
+                                                 ],
+                                    "Democracia":  [
+                                                       "Agua Clara",
+                                                       "Avaria",
+                                                       "Pedregal",
+                                                       "Piedra Grande",
+                                                       "Purureche"
+                                                   ],
+                                    "Falcón":  [
+                                                   "Adaure",
+                                                   "Adícora",
+                                                   "Baraived",
+                                                   "Buena Vista",
+                                                   "El Hato",
+                                                   "El Vínculo",
+                                                   "Jadacaquiva",
+                                                   "Moruy",
+                                                   "Pueblo Nuevo"
+                                               ],
+                                    "Federación":  [
+                                                       "Agua Larga",
+                                                       "Churuguara",
+                                                       "El Paují",
+                                                       "Independencia",
+                                                       "Mapararí"
+                                                   ],
+                                    "Jacura":  [
+                                                   "Agua Linda",
+                                                   "Araurima",
+                                                   "Jacura"
+                                               ],
+                                    "José Laurencio Silva":  [
+                                                                 "Boca de Aroa",
+                                                                 "Tucacas"
+                                                             ],
+                                    "Los Taques":  [
+                                                       "Judibana",
+                                                       "Los Taques"
+                                                   ],
+                                    "Mauroa":  [
+                                                   "Casigua",
+                                                   "Mene de Mauroa",
+                                                   "San Félix"
+                                               ],
+                                    "Miranda":  [
+                                                    "Guzmán Guillermo",
+                                                    "Mitare",
+                                                    "Río Seco",
+                                                    "Sabaneta",
+                                                    "San Antonio",
+                                                    "San Gabriel",
+                                                    "Santa Ana"
+                                                ],
+                                    "Monseñor Iturriza":  [
+                                                              "Boca del Tocuyo",
+                                                              "Chichiriviche",
+                                                              "Tocuyo de la Costa"
+                                                          ],
+                                    "Palmasola":  [
+                                                      "Palmasola"
+                                                  ],
+                                    "Petit":  [
+                                                  "Cabure",
+                                                  "Colina",
+                                                  "Curimagua"
+                                              ],
+                                    "Píritu":  [
+                                                   "Píritu",
+                                                   "San José de la Costa"
+                                               ],
+                                    "San Francisco":  [
+                                                          "San Francisco"
+                                                      ],
+                                    "Sucre":  [
+                                                  "Pecaya",
+                                                  "Sucre"
+                                              ],
+                                    "Tocópero":  [
+                                                     "Tocópero"
+                                                 ],
+                                    "Unión":  [
+                                                  "El Charal",
+                                                  "Las Vegas del Tuy",
+                                                  "Santa Cruz de Bucaral"
+                                              ],
+                                    "Urumaco":  [
+                                                    "Bruzual",
+                                                    "Urumaco"
+                                                ],
+                                    "Zamora":  [
+                                                   "La Ciénaga",
+                                                   "La Soledad",
+                                                   "Pueblo Cumarebo",
+                                                   "Puerto Cumarebo",
+                                                   "Zazárida"
+                                               ]
+                                },
+                     "Guárico":  {
+                                     "Camaguán":  [
+                                                      "Camaguán",
+                                                      "Puerto Miranda",
+                                                      "Uverito"
+                                                  ],
+                                     "Chaguaramas":  [
+                                                         "Chaguaramas"
+                                                     ],
+                                     "El Socorro":  [
+                                                        "El Socorro"
+                                                    ],
+                                     "José Félix Ribas":  [
+                                                              "San Rafael de Laya",
+                                                              "Tucupido"
+                                                          ],
+                                     "José Tadeo Monagas":  [
+                                                                "Altagracia de Orituco",
+                                                                "Carlos Soublette",
+                                                                "Libertad de Orituco",
+                                                                "Paso Real de Macaira",
+                                                                "San Francisco de Macaira",
+                                                                "San Francisco Javier de Lezama",
+                                                                "San Rafael de Orituco"
+                                                            ],
+                                     "Juan Germán Roscio":  [
+                                                                "Cantaclaro",
+                                                                "Parapara",
+                                                                "San Juan de los Morros"
+                                                            ],
+                                     "Julián Mellado":  [
+                                                            "El Sombrero",
+                                                            "Sosa"
+                                                        ],
+                                     "Las Mercedes":  [
+                                                          "Cabruta",
+                                                          "Las Mercedes",
+                                                          "Santa Rita de Manapire"
+                                                      ],
+                                     "Leonardo Infante":  [
+                                                              "Espino",
+                                                              "Valle de la Pascua"
+                                                          ],
+                                     "Ortíz":  [
+                                                   "Ortiz",
+                                                   "San Francisco de Tiznados",
+                                                   "San José de Tiznados",
+                                                   "San Lorenzo de Tiznados"
+                                               ],
+                                     "Pedro Zaraza":  [
+                                                          "San José de Unare",
+                                                          "Zaraza"
+                                                      ],
+                                     "San Gerónimo de Guayabal":  [
+                                                                      "Cazorla",
+                                                                      "Guayabal"
+                                                                  ],
+                                     "San José de Guaribe":  [
+                                                                 "San José de Guaribe",
+                                                                 "Uveral"
+                                                             ],
+                                     "Santa María de Ipire":  [
+                                                                  "Altamira",
+                                                                  "Santa María de Ipire"
+                                                              ],
+                                     "Sebastián Francisco de Miranda":  [
+                                                                            "Capital Urbana Calabozo",
+                                                                            "El Calvario",
+                                                                            "El Rastro",
+                                                                            "Guardatinajas"
+                                                                        ]
+                                 },
+                     "La Guaira":  {
+                                       "Vargas":  [
+                                                      "Caraballeda",
+                                                      "Carayaca",
+                                                      "Carlos Soublette",
+                                                      "Caruao Chuspa",
+                                                      "Catia La Mar",
+                                                      "El Junko",
+                                                      "La Guaira",
+                                                      "Macuto",
+                                                      "Maiquetía",
+                                                      "Naiguatá",
+                                                      "Urimare"
+                                                  ]
+                                   },
+                     "Lara":  {
+                                  "Andrés Eloy Blanco":  [
+                                                             "Pío Tamayo",
+                                                             "Quebrada Honda de Guache",
+                                                             "Yacambú"
+                                                         ],
+                                  "Crespo":  [
+                                                 "Fréitez",
+                                                 "José María Blanco"
+                                             ],
+                                  "Iribarren":  [
+                                                    "Aguedo Felipe Alvarado",
+                                                    "Buena Vista",
+                                                    "Catedral",
+                                                    "Concepción",
+                                                    "El Cují",
+                                                    "Juan de Villegas",
+                                                    "Juárez",
+                                                    "Santa Rosa",
+                                                    "Tamaca",
+                                                    "Unión"
+                                                ],
+                                  "Jiménez":  [
+                                                  "Coronel Mariano Peraza ",
+                                                  "Cuara",
+                                                  "Diego de Lozada",
+                                                  "José Bernardo Dorante",
+                                                  "Juan Bautista Rodríguez",
+                                                  "Paraíso de San José",
+                                                  "San Miguel",
+                                                  "Tintorero"
+                                              ],
+                                  "Morán":  [
+                                                "Anzoátegui",
+                                                "Bolívar",
+                                                "Guarico",
+                                                "Hilario Luna y Luna",
+                                                "Humocaro Alto",
+                                                "Humocaro Bajo",
+                                                "La Candelaria",
+                                                "Morán"
+                                            ],
+                                  "Palavecino":  [
+                                                     "Agua Viva",
+                                                     "Cabudare",
+                                                     "José Gregorio Bastidas"
+                                                 ],
+                                  "Simón Planas":  [
+                                                       "Buría",
+                                                       "Gustavo Vegas León",
+                                                       "Sarare"
+                                                   ],
+                                  "Torres":  [
+                                                 "Altagracia",
+                                                 "Antonio Díaz",
+                                                 "Camacaro",
+                                                 "Castañeda",
+                                                 "Cecilio Zubillaga",
+                                                 "Chiquinquirá",
+                                                 "El Blanco",
+                                                 "Espinoza de los Monteros",
+                                                 "Heriberto Arroyo",
+                                                 "Lara",
+                                                 "Las Mercedes",
+                                                 "Manuel Morillo",
+                                                 "Montaña Verde",
+                                                 "Montes de Oca",
+                                                 "Reyes Vargas",
+                                                 "Torres",
+                                                 "Trinidad Samuel"
+                                             ],
+                                  "Urdaneta":  [
+                                                   "Moroturo",
+                                                   "San Miguel",
+                                                   "Siquisique",
+                                                   "Xaguas"
+                                               ]
+                              },
+                     "Mérida":  {
+                                    "Alberto Adriani":  [
+                                                            "Gabriel Picón González",
+                                                            "Héctor Amable Mora",
+                                                            "José Nucete Sardi",
+                                                            "Presidente Betancourt",
+                                                            "Presidente Páez",
+                                                            "Presidente Rómulo Gallegos",
+                                                            "Pulido Méndez"
+                                                        ],
+                                    "Andrés Bello":  [
+                                                         "La Azulita"
+                                                     ],
+                                    "Antonio Pinto Salinas":  [
+                                                                  "Mesa Bolívar",
+                                                                  "Mesa de Las Palmas",
+                                                                  "Santa Cruz de Mora"
+                                                              ],
+                                    "Aricagua":  [
+                                                     "Aricagua",
+                                                     "San Antonio"
+                                                 ],
+                                    "Arzobispo Chacón":  [
+                                                             "Canagua",
+                                                             "Capurí",
+                                                             "Chacantá",
+                                                             "El Molino",
+                                                             "Guaimaral",
+                                                             "Mucuchachí",
+                                                             "Mucutuy"
+                                                         ],
+                                    "Campo Elías":  [
+                                                        "Acequias",
+                                                        "Fernández Peña",
+                                                        "Jají",
+                                                        "La Mesa",
+                                                        "Matriz",
+                                                        "Montalbán",
+                                                        "San José del Sur"
+                                                    ],
+                                    "Caracciolo Parra Olmedo":  [
+                                                                    "Florencio Ramírez",
+                                                                    "Tucaní"
+                                                                ],
+                                    "Cardenal Quintero":  [
+                                                              "Las Piedras",
+                                                              "Santo Domingo"
+                                                          ],
+                                    "Guaraque":  [
+                                                     "Guaraque",
+                                                     "Mesa de Quintero",
+                                                     "Río Negro"
+                                                 ],
+                                    "Julio César Salas":  [
+                                                              "Arapuey",
+                                                              "Palmira"
+                                                          ],
+                                    "Justo Briceño":  [
+                                                          "San Cristóbal de Torondoy",
+                                                          "Torondoy"
+                                                      ],
+                                    "Libertador":  [
+                                                       "Antonio Spinetti Dini",
+                                                       "Arias",
+                                                       "Caracciolo Parra Pérez",
+                                                       "Domingo Peña",
+                                                       "El Llano",
+                                                       "El Morro",
+                                                       "Gonzalo Picón Febres",
+                                                       "Jacinto Plaza",
+                                                       "Juan Rodríguez Suárez",
+                                                       "Lasso de la Vega",
+                                                       "Los Nevados",
+                                                       "Mariano Picón Salas",
+                                                       "Milla",
+                                                       "Osuna Rodríguez",
+                                                       "Sagrario"
+                                                   ],
+                                    "Miranda":  [
+                                                    "Andrés Eloy Blanco",
+                                                    "La Venta",
+                                                    "Piñango",
+                                                    "Timotes"
+                                                ],
+                                    "Obispo Ramos de Lora":  [
+                                                                 "Eloy Paredes",
+                                                                 "San Rafael de Alcázar",
+                                                                 "Santa Elena de Arenales"
+                                                             ],
+                                    "Padre Noguera":  [
+                                                          "Santa María de Caparo"
+                                                      ],
+                                    "Pueblo Llano":  [
+                                                         "Pueblo Llano"
+                                                     ],
+                                    "Rangel":  [
+                                                   "Cacute",
+                                                   "La Toma",
+                                                   "Mucuchíes",
+                                                   "Mucurubá",
+                                                   "San Rafael"
+                                               ],
+                                    "Rivas Dávila":  [
+                                                         "Bailadores",
+                                                         "Gerónimo Maldonado"
+                                                     ],
+                                    "Santos Marquina":  [
+                                                            "Tabay"
+                                                        ],
+                                    "Sucre":  [
+                                                  "Chiguará",
+                                                  "Estánquez",
+                                                  "La Trampa",
+                                                  "Lagunillas",
+                                                  "Pueblo Nuevo del Sur",
+                                                  "San Juan"
+                                              ],
+                                    "Tovar":  [
+                                                  "El Amparo",
+                                                  "El Llano",
+                                                  "San Francisco",
+                                                  "Tovar"
+                                              ],
+                                    "Tulio Febres Cordero":  [
+                                                                 "Independencia",
+                                                                 "María de la Concepción Palacios Blanco",
+                                                                 "Nueva Bolivia",
+                                                                 "Santa Apolonia"
+                                                             ],
+                                    "Zea":  [
+                                                "Caño El Tigre",
+                                                "Zea"
+                                            ]
+                                },
+                     "Miranda":  {
+                                     "Acevedo":  [
+                                                     "Aragüita",
+                                                     "Arévalo González",
+                                                     "Capaya",
+                                                     "Caucagua",
+                                                     "El Café",
+                                                     "Marizapa",
+                                                     "Panaquire",
+                                                     "Ribas"
+                                                 ],
+                                     "Andrés Bello":  [
+                                                          "Cumbo",
+                                                          "San José de Barlovento"
+                                                      ],
+                                     "Baruta":  [
+                                                    "El Cafetal",
+                                                    "Las Minas",
+                                                    "Nuestra Señora del Rosario"
+                                                ],
+                                     "Brión":  [
+                                                   "Curiepe",
+                                                   "Higuerote",
+                                                   "Tacarigua de Brión"
+                                               ],
+                                     "Buroz":  [
+                                                   "Mamporal"
+                                               ],
+                                     "Carrizal":  [
+                                                      "Carrizal"
+                                                  ],
+                                     "Chacao":  [
+                                                    "Chacao"
+                                                ],
+                                     "Cristóbal Rojas":  [
+                                                             "Charallave",
+                                                             "Las Brisas"
+                                                         ],
+                                     "El Hatillo":  [
+                                                        "El Hatillo"
+                                                    ],
+                                     "Guaicaipuro":  [
+                                                         "Altagracia de la Montaña",
+                                                         "Cecilio Acosta",
+                                                         "El Jarillo",
+                                                         "Los Teques",
+                                                         "Paracotos",
+                                                         "San Pedro",
+                                                         "Tácata"
+                                                     ],
+                                     "Independencia":  [
+                                                           "Cartanal",
+                                                           "Santa Teresa del Tuy"
+                                                       ],
+                                     "Lander":  [
+                                                    "La Democracia",
+                                                    "Ocumare del Tuy",
+                                                    "Santa Bárbara"
+                                                ],
+                                     "Los Salias":  [
+                                                        "San Antonio de los Altos"
+                                                    ],
+                                     "Páez":  [
+                                                  "El Guapo",
+                                                  "Paparo",
+                                                  "Río Chico",
+                                                  "San Fernando del Guapo",
+                                                  "Tacarigua de la Laguna"
+                                              ],
+                                     "Paz Castillo":  [
+                                                          "Santa Lucía del Tuy"
+                                                      ],
+                                     "Pedro Gual":  [
+                                                        "Cúpira",
+                                                        "Machurucuto"
+                                                    ],
+                                     "Plaza":  [
+                                                   "Guarenas"
+                                               ],
+                                     "Simón Bolívar":  [
+                                                           "San Antonio de Yare",
+                                                           "San Francisco de Yare"
+                                                       ],
+                                     "Sucre":  [
+                                                   "Caucagüita",
+                                                   "Filas de Mariche",
+                                                   "La Dolorita",
+                                                   "Leoncio Martínez",
+                                                   "Petare"
+                                               ],
+                                     "Urdaneta":  [
+                                                      "Cúa",
+                                                      "Nueva Cúa"
+                                                  ],
+                                     "Zamora":  [
+                                                    "Bolívar",
+                                                    "Guatire"
+                                                ]
+                                 },
+                     "Monagas":  {
+                                     "Acosta":  [
+                                                    "San Antonio de Maturín",
+                                                    "San Francisco de Maturín"
+                                                ],
+                                     "Aguasay":  [
+                                                     "Aguasay"
+                                                 ],
+                                     "Bolívar":  [
+                                                     "Caripito"
+                                                 ],
+                                     "Caripe":  [
+                                                    "Caripe",
+                                                    "El Guácharo",
+                                                    "La Guanota",
+                                                    "Sabana de Piedra",
+                                                    "San Agustín",
+                                                    "Teresen"
+                                                ],
+                                     "Cedeño":  [
+                                                    "Areo",
+                                                    "Capital Cedeño",
+                                                    "San Félix de Cantalicio",
+                                                    "Viento Fresco"
+                                                ],
+                                     "Ezequiel Zamora":  [
+                                                             "El Tejero",
+                                                             "Punta de Mata"
+                                                         ],
+                                     "Libertador":  [
+                                                        "Chaguaramas",
+                                                        "Las Alhuacas",
+                                                        "Tabasca",
+                                                        "Temblador"
+                                                    ],
+                                     "Maturín":  [
+                                                     "Alto de los Godos",
+                                                     "Boquerón",
+                                                     "El Corozo",
+                                                     "El Furrial",
+                                                     "Jusepín",
+                                                     "La Cruz",
+                                                     "La Pica",
+                                                     "Las Cocuizas",
+                                                     "San Simón",
+                                                     "San Vicente"
+                                                 ],
+                                     "Piar":  [
+                                                  "Aparicio",
+                                                  "Aragua de Maturín",
+                                                  "Chaguamal",
+                                                  "El Pinto",
+                                                  "Guanaguana",
+                                                  "La Toscana",
+                                                  "Taguaya"
+                                              ],
+                                     "Punceres":  [
+                                                      "Cachipo",
+                                                      "Quiriquire"
+                                                  ],
+                                     "Santa Bárbara":  [
+                                                           "Santa Bárbara"
+                                                       ],
+                                     "Sotillo":  [
+                                                     "Barrancas",
+                                                     "Los Barrancos de Fajardo"
+                                                 ],
+                                     "Uracoa":  [
+                                                    "Uracoa"
+                                                ]
+                                 },
+                     "Nueva Esparta":  {
+                                           "Antolín del Campo":  [
+                                                                     "Antolín del Campo"
+                                                                 ],
+                                           "Arismendi":  [
+                                                             "Arismendi"
+                                                         ],
+                                           "Díaz":  [
+                                                        "San Juan Bautista",
+                                                        "Zabala"
+                                                    ],
+                                           "García":  [
+                                                          "Francisco Fajardo",
+                                                          "García"
+                                                      ],
+                                           "Gómez":  [
+                                                         "Bolívar",
+                                                         "Guevara",
+                                                         "Matasiete",
+                                                         "Santa Ana",
+                                                         "Sucre"
+                                                     ],
+                                           "Maneiro":  [
+                                                           "Aguirre",
+                                                           "Maneiro"
+                                                       ],
+                                           "Marcano":  [
+                                                           "Adrián",
+                                                           "Juan Griego",
+                                                           "Yaguaraparo"
+                                                       ],
+                                           "Mariño":  [
+                                                          "Porlamar"
+                                                      ],
+                                           "Península de Macanao":  [
+                                                                        "Boca de Río",
+                                                                        "San Francisco de Macanao"
+                                                                    ],
+                                           "Tubores":  [
+                                                           "Los Baleales",
+                                                           "Tubores"
+                                                       ],
+                                           "Villalba":  [
+                                                            "Vicente Fuentes",
+                                                            "Villalba"
+                                                        ]
+                                       },
+                     "Portuguesa":  {
+                                        "Agua Blanca":  [
+
+                                                        ],
+                                        "Araure":  [
+                                                       "Capital Araure",
+                                                       "Río Acarigua"
+                                                   ],
+                                        "Esteller":  [
+                                                         "Capital Esteller",
+                                                         "Uveral"
+                                                     ],
+                                        "Guanare":  [
+                                                        "Córdoba",
+                                                        "Guanare",
+                                                        "San José de la Montaña",
+                                                        "San Juan de Guanaguanare",
+                                                        "Virgen de la Coromoto"
+                                                    ],
+                                        "Guanarito":  [
+                                                          "Divina Pastora",
+                                                          "Guanarito",
+                                                          "Trinidad de la Capilla"
+                                                      ],
+                                        "Monseñor José Vicente de Unda":  [
+                                                                              "Monseñor José Vicente de Unda",
+                                                                              "Peña Blanca"
+                                                                          ],
+                                        "Ospino":  [
+                                                       "Aparición",
+                                                       "Capital Ospino",
+                                                       "La Estación"
+                                                   ],
+                                        "Páez":  [
+                                                     "Páez",
+                                                     "Payara",
+                                                     "Pimpinela",
+                                                     "Ramón Peraza"
+                                                 ],
+                                        "Papelón":  [
+                                                        "Caño Delgadito",
+                                                        "Papelón"
+                                                    ],
+                                        "San Genaro de Boconoíto":  [
+                                                                        "Antolín Tovar",
+                                                                        "San Genaro de Boconoito"
+                                                                    ],
+                                        "San Rafael de Onoto":  [
+                                                                    "San Rafael de Onoto",
+                                                                    "Santa Fe",
+                                                                    "Thermo Morles"
+                                                                ],
+                                        "Santa Rosalía":  [
+                                                              "Florida",
+                                                              "Santa Rosalía"
+                                                          ],
+                                        "Sucre":  [
+                                                      "Concepción",
+                                                      "San José de Saguaz",
+                                                      "San Rafael de Palo Alzado",
+                                                      "Sucre",
+                                                      "Uvencio Antonio Velásquez",
+                                                      "Villa Rosa"
+                                                  ],
+                                        "Turén":  [
+                                                      "Canelones",
+                                                      "San Isidro Labrador",
+                                                      "Santa Cruz",
+                                                      "Turén"
+                                                  ]
+                                    },
+                     "Sucre":  {
+                                   "Andrés Eloy Blanco":  [
+                                                              "Mariño",
+                                                              "Rómulo Gallegos"
+                                                          ],
+                                   "Andrés Mata":  [
+                                                       "San José de Aerocuar",
+                                                       "Tavera Acosta"
+                                                   ],
+                                   "Arismendi":  [
+                                                     "Antonio José de Sucre",
+                                                     "El Morro de Puerto Santo",
+                                                     "Puerto Santo",
+                                                     "Río Caribe",
+                                                     "San Juan de las Galdonas"
+                                                 ],
+                                   "Benítez":  [
+                                                   "El Pilar",
+                                                   "El Rincón",
+                                                   "General Francisco Antonio Váquez",
+                                                   "Guaraúnos",
+                                                   "Tunapuicito",
+                                                   "Unión"
+                                               ],
+                                   "Bermúdez":  [
+                                                    "Bolívar",
+                                                    "Maracapana",
+                                                    "Santa Catalina",
+                                                    "Santa Rosa",
+                                                    "Santa Teresa"
+                                                ],
+                                   "Bolívar":  [
+
+                                               ],
+                                   "Cajigal":  [
+                                                   "El Paujil",
+                                                   "Libertad",
+                                                   "Yaguaraparo"
+                                               ],
+                                   "Cruz Salmerón Acosta":  [
+                                                                "Chacopata",
+                                                                "Cruz Salmerón Acosta",
+                                                                "Manicuare"
+                                                            ],
+                                   "Libertador":  [
+                                                      "Campo Elías",
+                                                      "Tunapuy"
+                                                  ],
+                                   "Mariño":  [
+                                                  "Campo Claro",
+                                                  "Irapa",
+                                                  "Maraval",
+                                                  "San Antonio de Irapa",
+                                                  "Soro"
+                                              ],
+                                   "Mejía":  [
+                                                 "Mejía"
+                                             ],
+                                   "Montes":  [
+                                                  "Arenas",
+                                                  "Aricagua",
+                                                  "Cogollar",
+                                                  "Cumanacoa",
+                                                  "San Fernando",
+                                                  "San Lorenzo"
+                                              ],
+                                   "Ribero":  [
+                                                  "Catuaro",
+                                                  "Rendón",
+                                                  "San Cruz",
+                                                  "Santa María",
+                                                  "Villa Frontado (Muelle de Cariaco)"
+                                              ],
+                                   "Sucre":  [
+                                                 "Altagracia",
+                                                 "Ayacucho",
+                                                 "Gran Mariscal",
+                                                 "Raúl Leoni",
+                                                 "San Juan",
+                                                 "Santa Inés",
+                                                 "Valentín Valiente"
+                                             ],
+                                   "Valdéz":  [
+                                                  "Bideau",
+                                                  "Cristóbal Colón",
+                                                  "Güiria",
+                                                  "Punta de Piedras"
+                                              ]
+                               },
+                     "Táchira":  {
+                                     "Andrés Bello":  [
+                                                          "Andrés Bello"
+                                                      ],
+                                     "Antonio Rómulo Costa":  [
+                                                                  "Antonio Rómulo Costa"
+                                                              ],
+                                     "Ayacucho":  [
+                                                      "Ayacucho",
+                                                      "Rivas Berti",
+                                                      "San Pedro del Río"
+                                                  ],
+                                     "Bolívar":  [
+                                                     "Bolívar",
+                                                     "General Juan Vicente Gómez",
+                                                     "Isaías Medina Angarita",
+                                                     "Palotal"
+                                                 ],
+                                     "Cárdenas":  [
+                                                      "Amenodoro Ángel Lamus",
+                                                      "Cárdenas",
+                                                      "La Florida"
+                                                  ],
+                                     "Córdoba":  [
+                                                     "Córdoba"
+                                                 ],
+                                     "Fernández Feo":  [
+                                                           "Alberto Adriani",
+                                                           "Fernández Feo",
+                                                           "Santo Domingo"
+                                                       ],
+                                     "Francisco de Miranda":  [
+                                                                  "Francisco de Miranda"
+                                                              ],
+                                     "García de Hevia":  [
+                                                             "Boca de Grita",
+                                                             "García de Hevia",
+                                                             "José Antonio Páez"
+                                                         ],
+                                     "Guásimos":  [
+                                                      "Guásimos"
+                                                  ],
+                                     "Independencia":  [
+                                                           "Independencia",
+                                                           "Juan Germán Roscio",
+                                                           "Román Cárdenas"
+                                                       ],
+                                     "Jáuregui":  [
+                                                      "Emilio Constantino Guerrero",
+                                                      "Jáuregui",
+                                                      "Monseñor Miguel Antonio Salas"
+                                                  ],
+                                     "José María Vargas":  [
+                                                               "José María Vargas"
+                                                           ],
+                                     "Junín":  [
+                                                   "Bramón",
+                                                   "Junín",
+                                                   "La Petrólea",
+                                                   "Quinimarí"
+                                               ],
+                                     "Libertad":  [
+                                                      "Cipriano Castro",
+                                                      "Libertad",
+                                                      "Manuel Felipe Rugeles"
+                                                  ],
+                                     "Libertador":  [
+                                                        "Doradas",
+                                                        "Emeterio Ochoa",
+                                                        "Libertador",
+                                                        "San Joaquín de Navay"
+                                                    ],
+                                     "Lobatera":  [
+                                                      "Constitución",
+                                                      "Lobatera"
+                                                  ],
+                                     "Michelena":  [
+                                                       "Michelena"
+                                                   ],
+                                     "Panamericano":  [
+                                                          "La Palmita",
+                                                          "Panamericano"
+                                                      ],
+                                     "Pedro María Ureña":  [
+                                                               "Nueva Arcadia",
+                                                               "Pedro María Ureña"
+                                                           ],
+                                     "Rafael Urdaneta":  [
+                                                             "Delicias",
+                                                             "Pecaya"
+                                                         ],
+                                     "Samuel Darío Maldonado":  [
+                                                                    "Boconó",
+                                                                    "Hernández",
+                                                                    "Samuel Darío Maldonado"
+                                                                ],
+                                     "San Cristóbal":  [
+                                                           "Dr. Francisco Romero Lobo",
+                                                           "La Concordia",
+                                                           "Pedro María Morantes",
+                                                           "San Juan Bautista",
+                                                           "San Sebastián"
+                                                       ],
+                                     "San Judas Tadeo":  [
+                                                             "San Judas Tadeo"
+                                                         ],
+                                     "Seboruco":  [
+                                                      "Seboruco"
+                                                  ],
+                                     "Simón Rodríguez":  [
+                                                             "Simón Rodríguez"
+                                                         ],
+                                     "Sucre":  [
+                                                   "Eleazar López Contreras",
+                                                   "San Pablo",
+                                                   "Sucre"
+                                               ],
+                                     "Torbes":  [
+                                                    "Torbes"
+                                                ],
+                                     "Uribante":  [
+                                                      "Cárdenas",
+                                                      "Juan Pablo Peñalosa",
+                                                      "Potosí",
+                                                      "Uribante"
+                                                  ]
+                                 },
+                     "Trujillo":  {
+                                      "Andrés Bello":  [
+                                                           "Araguaney",
+                                                           "El Jaguito",
+                                                           "La Esperanza",
+                                                           "Santa Isabel"
+                                                       ],
+                                      "Boconó":  [
+                                                     "Ayacucho",
+                                                     "Boconó",
+                                                     "Burbusay",
+                                                     "El Carmen",
+                                                     "General Ribas",
+                                                     "Guaramacal",
+                                                     "Monseñor Jáuregui",
+                                                     "Mosquey",
+                                                     "Rafael Rangel",
+                                                     "San José",
+                                                     "San Miguel",
+                                                     "Vega de Guaramacal"
+                                                 ],
+                                      "Bolívar":  [
+                                                      "Cheregüé",
+                                                      "Granados",
+                                                      "Sabana Grande"
+                                                  ],
+                                      "Candelaria":  [
+                                                         "Arnoldo Gabaldón",
+                                                         "Bolivia",
+                                                         "Carrillo",
+                                                         "Cegarra",
+                                                         "Chejendé",
+                                                         "Manuel Salvador Ulloa",
+                                                         "San José"
+                                                     ],
+                                      "Carache":  [
+                                                      "Carache",
+                                                      "Cuicas",
+                                                      "La Concepción",
+                                                      "Panamericana",
+                                                      "Santa Cruz"
+                                                  ],
+                                      "Escuque":  [
+                                                      "Escuque",
+                                                      "La Unión",
+                                                      "Sabana Libre",
+                                                      "Santa Rita"
+                                                  ],
+                                      "José Felipe Márquez Cañizalez":  [
+                                                                            "Antonio José de Sucre",
+                                                                            "El Socorro",
+                                                                            "Los Caprichos"
+                                                                        ],
+                                      "Juan Vicente Campos Elías":  [
+                                                                        "Arnoldo Gabaldón",
+                                                                        "Campo Elías"
+                                                                    ],
+                                      "La Ceiba":  [
+                                                       "El Progreso",
+                                                       "La Ceiba",
+                                                       "Santa Apolonia",
+                                                       "Tres de Febrero"
+                                                   ],
+                                      "Miranda":  [
+                                                      "Agua Caliente",
+                                                      "Agua Santa",
+                                                      "El Cenizo",
+                                                      "El Dividive",
+                                                      "Valerita"
+                                                  ],
+                                      "Monte Carmelo":  [
+                                                            "Buena Vista",
+                                                            "Monte Carmelo",
+                                                            "Santa María del Horcón"
+                                                        ],
+                                      "Motatán":  [
+                                                      "El Baño",
+                                                      "Jalisco",
+                                                      "Motatán"
+                                                  ],
+                                      "Pampán":  [
+                                                     "Flor de Patria",
+                                                     "La Paz",
+                                                     "Pampán",
+                                                     "Santa Ana"
+                                                 ],
+                                      "Pampanito":  [
+                                                        "La Concepción",
+                                                        "Pampanito",
+                                                        "Pampanito II"
+                                                    ],
+                                      "Rafael Rangel":  [
+                                                            "Betijoque",
+                                                            "José Gregorio Hernández",
+                                                            "La Pueblita",
+                                                            "Los Cedros"
+                                                        ],
+                                      "San Rafael de Carvajal":  [
+                                                                     "Antonio Nicolás Briceño",
+                                                                     "Campo Alegre",
+                                                                     "Carvajal",
+                                                                     "José Leonardo Suárez"
+                                                                 ],
+                                      "Sucre":  [
+                                                    "El Paraíso",
+                                                    "Junín",
+                                                    "Sabana de Mendoza",
+                                                    "Valmore Rodríguez"
+                                                ],
+                                      "Trujillo":  [
+                                                       "Andrés Linares",
+                                                       "Chiquinquirá",
+                                                       "Cristóbal Mendoza",
+                                                       "Cruz Carrillo",
+                                                       "Matriz",
+                                                       "Monseñor Carrillo",
+                                                       "Tres Esquinas"
+                                                   ],
+                                      "Urdaneta":  [
+                                                       "Cabimbú",
+                                                       "Jajó",
+                                                       "La Mesa de Esnujaque",
+                                                       "La Quebrada",
+                                                       "Santiago",
+                                                       "Tuñame"
+                                                   ],
+                                      "Valera":  [
+                                                     "Juan Ignacio Montilla",
+                                                     "La Beatriz",
+                                                     "La Puerta",
+                                                     "Mendoza del Valle de Momboy",
+                                                     "Mercedes Díaz",
+                                                     "San Luis"
+                                                 ]
+                                  },
+                     "Yaracuy":  {
+                                     "Arístides Bastidas":  [
+                                                                "Arístides Bastidas"
+                                                            ],
+                                     "Bolívar":  [
+                                                     "Bolívar"
+                                                 ],
+                                     "Bruzual":  [
+                                                     "Campo Elías",
+                                                     "Chivacoa"
+                                                 ],
+                                     "Cocorote":  [
+                                                      "Cocorote"
+                                                  ],
+                                     "Independencia":  [
+                                                           "Independencia"
+                                                       ],
+                                     "José Antonio Páez":  [
+                                                               "José Antonio Páez"
+                                                           ],
+                                     "José Joaquín Veroes":  [
+                                                                 "El Guayabo",
+                                                                 "Farriar"
+                                                             ],
+                                     "La Trinidad":  [
+                                                         "La Trinidad"
+                                                     ],
+                                     "Manuel Monge":  [
+                                                          "Manuel Monge"
+                                                      ],
+                                     "Nirgua":  [
+                                                    "Nirgua",
+                                                    "Salóm",
+                                                    "Temerla"
+                                                ],
+                                     "Peña":  [
+                                                  "San Andrés",
+                                                  "Yaritagua"
+                                              ],
+                                     "San Felipe":  [
+                                                        "Albarico",
+                                                        "San Felipe",
+                                                        "San Javier"
+                                                    ],
+                                     "Sucre":  [
+                                                   "Sucre"
+                                               ],
+                                     "Urachiche":  [
+                                                       "Urachiche"
+                                                   ]
+                                 },
+                     "Zulia":  {
+                                   "Almirante Padilla":  [
+                                                             "Isla de Toas",
+                                                             "Monagas"
+                                                         ],
+                                   "Baralt":  [
+                                                  "General Urdaneta",
+                                                  "Libertador",
+                                                  "Manuel Guanipa Matos",
+                                                  "Marcelino Briceño",
+                                                  "Pueblo Nuevo",
+                                                  "San Timoteo"
+                                              ],
+                                   "Cabimas":  [
+                                                   "Ambrosio",
+                                                   "Arístides Calvani",
+                                                   "Carmen Herrera",
+                                                   "Germán Ríos Linares",
+                                                   "Jorge Hernández",
+                                                   "La Rosa",
+                                                   "Punta Gorda",
+                                                   "Rómulo Betancourt",
+                                                   "San Benito"
+                                               ],
+                                   "Catatumbo":  [
+                                                     "Encontrados",
+                                                     "Udón Pérez"
+                                                 ],
+                                   "Colón":  [
+                                                 "Moralito",
+                                                 "San Carlos del Zulia",
+                                                 "Santa Bárbara",
+                                                 "Santa Cruz del Zulia",
+                                                 "Urribarrí"
+                                             ],
+                                   "Francisco Javier Pulgar":  [
+                                                                   "Carlos Quevedo",
+                                                                   "Francisco Javier Pulgar",
+                                                                   "Guamo-Gavilanes",
+                                                                   "Simón Rodríguez"
+                                                               ],
+                                   "Jesús Enrique Losada":  [
+                                                                "José Ramón Yépez",
+                                                                "La Concepción",
+                                                                "Mariano Parra León",
+                                                                "San José"
+                                                            ],
+                                   "Jesús María Semprún":  [
+                                                               "Barí",
+                                                               "Jesús María Semprún"
+                                                           ],
+                                   "La Cañada de Urdaneta":  [
+                                                                 "Andrés Bello",
+                                                                 "Chiquinquirá",
+                                                                 "Concepción",
+                                                                 "El Carmelo",
+                                                                 "Potreritos"
+                                                             ],
+                                   "Lagunillas":  [
+                                                      "Alonso de Ojeda",
+                                                      "Campo Lara",
+                                                      "Eleazar López Contreras",
+                                                      "Libertad",
+                                                      "Venezuela"
+                                                  ],
+                                   "Machiques de Perijá":  [
+                                                               "Bartolomé de las Casas",
+                                                               "Libertad",
+                                                               "Río Negro",
+                                                               "San José de Perijá"
+                                                           ],
+                                   "Mara":  [
+                                                "La Sierrita",
+                                                "Las Parcelas",
+                                                "Luis de Vicente",
+                                                "Monseñor Marcos Sergio Godoy",
+                                                "Ricaurte",
+                                                "San Rafael",
+                                                "Tamare"
+                                            ],
+                                   "Maracaibo":  [
+                                                     "Antonio Borjas Romero",
+                                                     "Bolívar",
+                                                     "Cacique Mara",
+                                                     "Carracciolo Parra Pérez",
+                                                     "Cecilio Acosta",
+                                                     "Chiquinquirá",
+                                                     "Coquivacoa",
+                                                     "Cristo de Aranza",
+                                                     "Francisco Eugenio Bustamante",
+                                                     "Idelfonzo Vásquez",
+                                                     "Juana de Ávila",
+                                                     "Luis Hurtado Higuera",
+                                                     "Manuel Dagnino",
+                                                     "Olegario Villalobos",
+                                                     "Raúl Leoni",
+                                                     "San Isidro",
+                                                     "Santa Lucía",
+                                                     "Venancio Pulgar"
+                                                 ],
+                                   "Miranda":  [
+                                                   "Altagracia",
+                                                   "Ana María Campos",
+                                                   "Faría",
+                                                   "San Antonio",
+                                                   "San José"
+                                               ],
+                                   "Páez":  [
+                                                "Alta Guajira",
+                                                "Elías Sánchez Rubio",
+                                                "Guajira",
+                                                "Sinamaica"
+                                            ],
+                                   "Rosario de Perijá":  [
+                                                             "Donaldo García",
+                                                             "El Rosario",
+                                                             "Sixto Zambrano"
+                                                         ],
+                                   "San Francisco":  [
+                                                         "Domitila Flores",
+                                                         "El Bajo",
+                                                         "Francisco Ochoa",
+                                                         "Los Cortijos",
+                                                         "Marcial Hernández",
+                                                         "San Francisco"
+                                                     ],
+                                   "Santa Rita":  [
+                                                      "El Mene",
+                                                      "José Cenobio Urribarrí",
+                                                      "Pedro Lucas Urribarrí",
+                                                      "Santa Rita"
+                                                  ],
+                                   "Simón Bolívar":  [
+                                                         "Manuel Manrique",
+                                                         "Rafael Maria Baralt",
+                                                         "Rafael Urdaneta"
+                                                     ],
+                                   "Sucre":  [
+                                                 "Bobures",
+                                                 "El Batey",
+                                                 "Gibraltar",
+                                                 "Heras",
+                                                 "Monseñor Arturo Álvarez",
+                                                 "Rómulo Gallegos"
+                                             ],
+                                   "Valmore Rodríguez":  [
+                                                             "La Victoria",
+                                                             "Rafael Urdaneta",
+                                                             "Raúl Cuenca"
+                                                         ]
+                               }
+                 }
+}

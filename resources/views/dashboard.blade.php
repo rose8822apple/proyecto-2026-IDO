@@ -10,7 +10,7 @@
 </div>
 
 @if($peopleCount > 0 || $sitesCount > 0 || $totalShifts > 0)
-    <div class="stats-grid">
+    <div class="stats-grid dashboard-summary-grid">
         <div class="stat-card">
             <div class="stat-icon red"><i class="bi bi-calendar-check"></i></div>
             <span>Turnos registrados</span>
@@ -29,36 +29,13 @@
             <strong>{{ $sitesCount }}</strong>
             <small class="neutral">{{ $operationalSites }} operativas</small>
         </div>
-        <div class="stat-card">
-            <div class="stat-icon green"><i class="bi bi-person-check"></i></div>
-            <span>Personal en turno</span>
-            <strong data-stat="people-on-shift">{{ $peopleOnShift }}</strong>
-            <small class="neutral">Activos actualmente</small>
-        </div>
     </div>
 
     <div class="panel operational-stats-panel">
         <div class="panel-head">
             <div>
                 <h3>Estadísticas operativas</h3>
-                <p>Personal y sedes agrupados por estado</p>
-            </div>
-        </div>
-        <div class="stats-status-group">
-            <h4>Personal</h4>
-            <div class="stats-status-grid stats-status-grid-personnel">
-                <div class="stats-status-item">
-                    <span>Operativo</span>
-                    <strong data-stat="operational-people">{{ $operationalPeople }}</strong>
-                </div>
-                <div class="stats-status-item">
-                    <span>En turno</span>
-                    <strong data-stat="people-on-shift">{{ $peopleOnShift }}</strong>
-                </div>
-                <div class="stats-status-item">
-                    <span>No disponible</span>
-                    <strong data-stat="unavailable-people">{{ $unavailablePeople }}</strong>
-                </div>
+                <p>Sedes agrupadas por estado</p>
             </div>
         </div>
         <div class="stats-status-group">

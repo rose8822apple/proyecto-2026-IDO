@@ -271,7 +271,7 @@ const validatePositiveNumber = (input) => {
 };
 
 const setupPersonFieldRestrictions = () => {
-    const nameInput = document.querySelector('[data-name-only]');
+    const nameInputs = document.querySelectorAll('[data-name-only]');
     const phoneInput = document.querySelector('[data-numeric-only]');
 
     const removeMatchingCharacters = (input, pattern) => {
@@ -288,8 +288,79 @@ const setupPersonFieldRestrictions = () => {
         });
     };
 
-    if (nameInput) removeMatchingCharacters(nameInput, /[0-9]/g);
+    nameInputs.forEach((input) => removeMatchingCharacters(input, /[0-9]/g));
     if (phoneInput) removeMatchingCharacters(phoneInput, /[^0-9]/g);
+};
+
+const setupDateFieldRestrictions = () => {
+    const startDate = document.querySelector('[data-date-field="date"]');
+    const endDate = document.querySelector('[data-date-field="end_date"]');
+
+    if (!startDate || !endDate) return;
+
+    const updateEndDateMinimum = () => {
+        endDate.min = startDate.value > startDate.min ? startDate.value : startDate.min;
+    };
+
+    startDate.addEventListener('change', updateEndDateMinimum);
+    updateEndDateMinimum();
+};
+
+const setupTerritorySelectors = () => {
+    const stateSelect = document.querySelector('[data-territory-state]');
+    const municipalitySelect = document.querySelector('[data-territory-municipality]');
+    const parishSelect = document.querySelector('[data-territory-parish]');
+    const catalogElement = document.querySelector('[data-territory-catalog]');
+    const emptyMessage = document.querySelector('[data-territory-empty-message]');
+
+    if (!stateSelect || !municipalitySelect || !parishSelect || !catalogElement) return;
+
+    const catalog = JSON.parse(catalogElement.textContent);
+
+    const replaceOptions = (select, values, placeholder) => {
+        select.replaceChildren(new Option(placeholder, ''));
+        values.forEach((value) => select.add(new Option(value, value)));
+    };
+
+    const updateParishes = (selectedParish = '') => {
+        const parishes = catalog[stateSelect.value]?.[municipalitySelect.value] || [];
+        replaceOptions(parishSelect, parishes, parishes.length ? 'Selecciona una parroquia' : 'Sin parroquias disponibles');
+        parishSelect.value = selectedParish;
+        parishSelect.disabled = parishes.length === 0;
+        parishSelect.required = parishes.length > 0;
+        if (emptyMessage) emptyMessage.hidden = parishes.length > 0 || !municipalitySelect.value;
+    };
+
+    const updateMunicipalities = (selectedMunicipality = '') => {
+        const municipalities = Object.keys(catalog[stateSelect.value] || {});
+        replaceOptions(municipalitySelect, municipalities, 'Selecciona un municipio');
+        municipalitySelect.value = selectedMunicipality;
+        municipalitySelect.disabled = municipalities.length === 0;
+        updateParishes();
+    };
+
+    stateSelect.addEventListener('change', () => updateMunicipalities());
+    municipalitySelect.addEventListener('change', () => updateParishes());
+    updateParishes(parishSelect.value);
+};
+
+const setupLiveClock = () => {
+    const clock = document.querySelector('[data-live-clock]');
+    if (!clock) return;
+
+    const updateClock = () => {
+        const now = new Date();
+        clock.querySelector('span').textContent = new Intl.DateTimeFormat('es-VE', {
+            timeZone: 'America/Caracas',
+            hour: '2-digit',
+            minute: '2-digit',
+            second: '2-digit',
+            hourCycle: 'h23',
+        }).format(now);
+    };
+
+    updateClock();
+    window.setInterval(updateClock, 1000);
 };
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -326,6 +397,9 @@ document.addEventListener('DOMContentLoaded', () => {
     setupModuleTable();
     setupPersonPreview();
     setupPersonFieldRestrictions();
+    setupDateFieldRestrictions();
+    setupTerritorySelectors();
+    setupLiveClock();
     setupNotifications();
 
     document.addEventListener('click', (event) => {

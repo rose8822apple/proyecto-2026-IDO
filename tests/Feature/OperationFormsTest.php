@@ -8,6 +8,7 @@ use App\Models\Person;
 use App\Models\Shift;
 use App\Models\Site;
 use App\Services\AuditLogger;
+use App\Support\VenezuelaTerritory;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\DB;
@@ -23,10 +24,14 @@ class OperationFormsTest extends TestCase
     {
         parent::setUp();
 
-        Schema::create('roles', function (Blueprint $table) {
-            $table->id();
-            $table->string('nombre', 50);
-        });
+        if (! Schema::hasTable('roles')) {
+            Schema::create('roles', function (Blueprint $table) {
+                $table->id();
+                $table->string('nombre', 50);
+            });
+        }
+
+        DB::table('roles')->delete();
     }
 
     public function test_forms_hide_coverage_and_operations_can_be_saved_without_it(): void
@@ -76,7 +81,9 @@ class OperationFormsTest extends TestCase
         $this->post('/sedes', [
             'name' => 'Hospital Central',
             'type' => 'Hospital',
-            'municipality' => 'San Miguel',
+            'state' => 'Amazonas',
+            'municipality' => 'Alto Orinoco',
+            'parish' => 'Alto Orinoco',
             'status' => 'Operativa',
         ])->assertRedirect('/sedes');
 
@@ -85,8 +92,8 @@ class OperationFormsTest extends TestCase
         $this->post('/turnos', [
             'title' => 'Triaje general',
             'site_id' => $site->id,
-            'date' => '2026-10-01',
-            'end_date' => '2026-10-01',
+            'date' => now()->addDay()->toDateString(),
+            'end_date' => now()->addDay()->toDateString(),
             'start_time' => '08:00',
             'end_time' => '14:00',
             'status' => 'En curso',
@@ -255,6 +262,9 @@ class OperationFormsTest extends TestCase
 
     public function test_shift_can_be_created_with_a_date_range_and_end_must_not_precede_start(): void
     {
+        $startDate = now()->addDay()->toDateString();
+        $endDate = now()->addDays(4)->toDateString();
+        $earlierDate = now()->addDays(2)->toDateString();
         $site = Site::query()->create([
             'name' => 'Hospital Central',
             'type' => 'Hospital',
@@ -265,16 +275,16 @@ class OperationFormsTest extends TestCase
         $this->post('/turnos', [
             'title' => 'Jornada extendida',
             'site_id' => $site->id,
-            'date' => '2026-10-05',
-            'end_date' => '2026-10-08',
+            'date' => $startDate,
+            'end_date' => $endDate,
             'start_time' => '08:00:00',
             'end_time' => '16:00:00',
             'status' => 'En curso',
         ])->assertRedirect('/turnos');
 
         $shift = Shift::query()->where('title', 'Jornada extendida')->firstOrFail();
-        $this->assertSame('2026-10-05', $shift->date);
-        $this->assertSame('2026-10-08', $shift->end_date);
+        $this->assertSame($startDate, $shift->date);
+        $this->assertSame($endDate, $shift->end_date);
         $this->get('/turnos/'.$shift->id.'/editar')
             ->assertOk()
             ->assertSee('id="start_time"', false)
@@ -285,16 +295,16 @@ class OperationFormsTest extends TestCase
 
         $this->get('/turnos')
             ->assertOk()
-            ->assertSee('2026-10-05 al 2026-10-08');
+            ->assertSee($startDate.' al '.$endDate);
         $this->get('/disponibilidad/nueva')
             ->assertOk()
-            ->assertSee('2026-10-05 al 2026-10-08 | Jornada extendida');
+            ->assertSee($startDate.' al '.$endDate.' | Jornada extendida');
 
         $this->from('/turnos/crear')->post('/turnos', [
             'title' => 'Fechas incorrectas',
             'site_id' => $site->id,
-            'date' => '2026-10-08',
-            'end_date' => '2026-10-05',
+            'date' => $earlierDate,
+            'end_date' => $startDate,
             'start_time' => '08:00',
             'end_time' => '16:00',
             'status' => 'En curso',
@@ -315,8 +325,8 @@ class OperationFormsTest extends TestCase
         $this->post('/turnos', [
             'title' => 'Turno navegador',
             'site_id' => $site->id,
-            'date' => '2026-10-05',
-            'end_date' => '2026-10-05',
+            'date' => now()->addDay()->toDateString(),
+            'end_date' => now()->addDay()->toDateString(),
             'start_time' => '08:00',
             'end_time' => '16:00',
             'status' => 'En curso',
@@ -326,6 +336,210 @@ class OperationFormsTest extends TestCase
             'title' => 'Turno navegador',
             'start_time' => '08:00',
             'end_time' => '16:00',
+        ]);
+    }
+
+    public function test_shift_form_rejects_numeric_names_and_past_dates_on_create_and_update(): void
+    {
+        $site = Site::query()->create([
+            'name' => 'Hospital Central',
+            'type' => 'Hospital',
+            'municipality' => 'San Miguel',
+            'status' => 'Operativa',
+        ]);
+        $today = now()->toDateString();
+        $tomorrow = now()->addDay()->toDateString();
+
+        $this->get('/turnos/crear')
+            ->assertOk()
+            ->assertSee('min="'.$today.'"', false)
+            ->assertSee('pattern="[^0-9]+" data-name-only', false);
+
+        $this->from('/turnos/crear')->post('/turnos', [
+            'title' => 'Turno 5',
+            'site_id' => $site->id,
+            'date' => $tomorrow,
+            'end_date' => $tomorrow,
+            'start_time' => '08:00',
+            'end_time' => '16:00',
+            'status' => 'En curso',
+        ])->assertSessionHasErrors('title');
+
+        $this->from('/turnos/crear')->post('/turnos', [
+            'title' => 'Turno matutino',
+            'site_id' => $site->id,
+            'date' => now()->subDay()->toDateString(),
+            'end_date' => $tomorrow,
+            'start_time' => '08:00',
+            'end_time' => '16:00',
+            'status' => 'En curso',
+        ])->assertSessionHasErrors('date');
+
+        $shift = Shift::query()->create([
+            'title' => 'Turno matutino',
+            'site_id' => $site->id,
+            'date' => $tomorrow,
+            'end_date' => $tomorrow,
+            'start_time' => '08:00',
+            'end_time' => '16:00',
+            'status' => 'En curso',
+        ]);
+
+        $this->put('/turnos/'.$shift->id, [
+            'title' => 'Turno 6',
+            'site_id' => $site->id,
+            'date' => $tomorrow,
+            'end_date' => $tomorrow,
+            'start_time' => '08:00',
+            'end_time' => '16:00',
+            'status' => 'En curso',
+        ])->assertSessionHasErrors('title');
+
+        $this->put('/turnos/'.$shift->id, [
+            'title' => 'Turno matutino',
+            'site_id' => $site->id,
+            'date' => now()->subDay()->toDateString(),
+            'end_date' => $tomorrow,
+            'start_time' => '08:00',
+            'end_time' => '16:00',
+            'status' => 'En curso',
+        ])->assertSessionHasErrors('date');
+    }
+
+    public function test_site_name_and_municipality_reject_numbers(): void
+    {
+        $this->post('/sedes', [
+            'name' => 'Hospital 2',
+            'type' => 'Hospital',
+            'state' => 'Amazonas',
+            'municipality' => 'San Miguel',
+            'status' => 'Operativa',
+        ])->assertSessionHasErrors('name');
+
+        $this->post('/sedes', [
+            'name' => 'Hospital Central',
+            'type' => 'Hospital',
+            'state' => 'Amazonas',
+            'municipality' => 'San Miguel 2',
+            'status' => 'Operativa',
+        ])->assertSessionHasErrors('municipality');
+    }
+
+    public function test_site_form_renders_dependent_territory_selectors_and_catalog(): void
+    {
+        $this->get('/sedes/nueva')
+            ->assertOk()
+            ->assertSee('data-territory-catalog', false)
+            ->assertSee('data-territory-state', false)
+            ->assertSee('data-territory-municipality', false)
+            ->assertSee('data-territory-parish', false)
+            ->assertSee('disabled', false)
+            ->assertSee('Amazonas');
+
+        $catalog = VenezuelaTerritory::catalog();
+        $this->assertCount(25, $catalog);
+        $this->assertSame(['Alto Orinoco', 'Huachamacare Acanaña', 'Marawaka Toky Shamanaña', 'Mavaka Mavaka', 'Sierra Parima Parimabé'], $catalog['Amazonas']['Alto Orinoco']);
+        $this->assertSame([], $catalog['Portuguesa']['Agua Blanca']);
+    }
+
+    public function test_site_location_must_match_state_municipality_and_parish(): void
+    {
+        $this->from('/sedes/nueva')->post('/sedes', [
+            'name' => 'Hospital Central',
+            'type' => 'Hospital',
+            'state' => 'Amazonas',
+            'municipality' => 'Anaco',
+            'parish' => 'Anaco',
+            'status' => 'Operativa',
+        ])->assertSessionHasErrors('municipality');
+
+        $this->from('/sedes/nueva')->post('/sedes', [
+            'name' => 'Hospital Central',
+            'type' => 'Hospital',
+            'state' => 'Amazonas',
+            'municipality' => 'Alto Orinoco',
+            'parish' => 'Anaco',
+            'status' => 'Operativa',
+        ])->assertSessionHasErrors('parish');
+
+        $this->post('/sedes', [
+            'name' => 'Hospital Central',
+            'type' => 'Hospital',
+            'state' => 'Amazonas',
+            'municipality' => 'Alto Orinoco',
+            'parish' => 'Huachamacare Acanaña',
+            'status' => 'Operativa',
+        ])->assertRedirect('/sedes');
+
+        $this->assertDatabaseHas('sites', [
+            'name' => 'Hospital Central',
+            'state' => 'Amazonas',
+            'municipality' => 'Alto Orinoco',
+            'parish' => 'Huachamacare Acanaña',
+        ]);
+
+        $this->post('/sedes', [
+            'name' => 'Centro comunitario',
+            'type' => 'Otro',
+            'state' => 'Distrito Capital',
+            'municipality' => 'Libertador',
+            'parish' => '23 de enero',
+            'status' => 'Operativa',
+        ])->assertRedirect('/sedes');
+
+        $this->assertDatabaseHas('sites', [
+            'name' => 'Centro comunitario',
+            'state' => 'Distrito Capital',
+            'municipality' => 'Libertador',
+            'parish' => '23 de enero',
+        ]);
+    }
+
+    public function test_site_can_be_saved_in_a_municipality_without_catalogued_parishes(): void
+    {
+        $this->post('/sedes', [
+            'name' => 'Centro de atención',
+            'type' => 'Otro',
+            'state' => 'Portuguesa',
+            'municipality' => 'Agua Blanca',
+            'status' => 'Operativa',
+        ])->assertRedirect('/sedes');
+
+        $this->assertDatabaseHas('sites', [
+            'name' => 'Centro de atención',
+            'state' => 'Portuguesa',
+            'municipality' => 'Agua Blanca',
+            'parish' => null,
+        ]);
+    }
+
+    public function test_legacy_site_can_be_updated_without_changing_its_unknown_location(): void
+    {
+        $site = Site::query()->create([
+            'name' => 'Hospital anterior',
+            'type' => 'Hospital',
+            'municipality' => 'San Miguel',
+            'status' => 'Operativa',
+        ]);
+
+        $this->get('/sedes/'.$site->id.'/editar')
+            ->assertOk()
+            ->assertSee('value="San Miguel"', false)
+            ->assertSee('>San Miguel</option>', false);
+
+        $this->put('/sedes/'.$site->id, [
+            'name' => 'Hospital anterior actualizado',
+            'type' => 'Hospital',
+            'municipality' => 'San Miguel',
+            'status' => 'Operativa',
+        ])->assertRedirect('/sedes');
+
+        $this->assertDatabaseHas('sites', [
+            'id' => $site->id,
+            'name' => 'Hospital anterior actualizado',
+            'municipality' => 'San Miguel',
+            'state' => null,
+            'parish' => null,
         ]);
     }
 
@@ -363,7 +577,9 @@ class OperationFormsTest extends TestCase
         $this->post('/sedes', [
             'name' => 'Hospital Central',
             'type' => 'Hospital',
-            'municipality' => 'San Miguel',
+            'state' => 'Amazonas',
+            'municipality' => 'Alto Orinoco',
+            'parish' => 'Alto Orinoco',
             'status' => 'Operativa',
         ])->assertRedirect('/sedes');
 
@@ -372,8 +588,8 @@ class OperationFormsTest extends TestCase
         $this->post('/turnos', [
             'title' => 'Triaje general',
             'site_id' => 1,
-            'date' => '2026-10-01',
-            'end_date' => '2026-10-01',
+            'date' => now()->addDay()->toDateString(),
+            'end_date' => now()->addDay()->toDateString(),
             'start_time' => '08:00',
             'end_time' => '14:00',
             'status' => 'En curso',
@@ -933,7 +1149,7 @@ class OperationFormsTest extends TestCase
             ->assertSee('data-notification-total>1', false);
     }
 
-    public function test_dashboard_shows_staff_on_shift_and_site_status_counts(): void
+    public function test_dashboard_shows_site_status_counts_without_staff_on_shift_sections(): void
     {
         Person::query()->create([
             'name' => 'Ana García',
@@ -972,13 +1188,19 @@ class OperationFormsTest extends TestCase
 
         $this->get('/dashboard')
             ->assertOk()
-            ->assertSee('Personal en turno')
-            ->assertSee('data-stat="people-on-shift">1</strong>', false)
+            ->assertDontSee('Personal en turno')
+            ->assertDontSee('>En turno</span>', false)
+            ->assertDontSee('stats-status-grid-personnel', false)
             ->assertSee('Estadísticas operativas')
-            ->assertSee('data-stat="operational-people">1</strong>', false)
-            ->assertSee('data-stat="unavailable-people">1</strong>', false)
             ->assertSee('data-stat="operational-sites">1</strong>', false)
             ->assertSee('data-stat="sites-in-review">1</strong>', false)
+            ->assertSee('data-live-clock', false)
+            ->assertSee('bi-clock', false)
+            ->assertSee('Instituto universitario jesus obrero IUJO CARACAS, Grupo 2 Investigacion de operaciones AC')
+            ->assertSee('aria-label="Instagram"', false)
+            ->assertSee('aria-label="Facebook"', false)
+            ->assertSee('aria-label="X"', false)
+            ->assertSee('href="https://github.com/rose8822apple/proyecto-2026-IDO"', false)
             ->assertDontSee('Cobertura promedio');
     }
 
@@ -1106,7 +1328,9 @@ class OperationFormsTest extends TestCase
         $this->put('/sedes/'.$site->id, [
             'name' => 'Hospital Central Nuevo',
             'type' => 'Hospital',
-            'municipality' => 'San Miguel del Valle',
+            'state' => 'Amazonas',
+            'municipality' => 'Alto Orinoco',
+            'parish' => 'Alto Orinoco',
             'status' => 'En revisión',
         ])->assertRedirect('/sedes');
 
@@ -1115,14 +1339,14 @@ class OperationFormsTest extends TestCase
         $this->put('/turnos/'.$shift->id, [
             'title' => 'Turno actualizado',
             'site_id' => $site->id,
-            'date' => '2026-10-01',
-            'end_date' => '2026-10-02',
+            'date' => now()->addDay()->toDateString(),
+            'end_date' => now()->addDays(2)->toDateString(),
             'start_time' => '09:00:00',
             'end_time' => '15:00:00',
             'status' => 'Completo',
         ])->assertRedirect('/turnos');
 
-        $this->assertDatabaseHas('shifts', ['id' => $shift->id, 'title' => 'Turno actualizado', 'coverage' => 100, 'date' => '2026-10-01', 'end_date' => '2026-10-02']);
+        $this->assertDatabaseHas('shifts', ['id' => $shift->id, 'title' => 'Turno actualizado', 'coverage' => 100, 'date' => now()->addDay()->toDateString(), 'end_date' => now()->addDays(2)->toDateString()]);
 
         $this->put('/disponibilidad/'.$availability->id, [
             'person_id' => $person->id,

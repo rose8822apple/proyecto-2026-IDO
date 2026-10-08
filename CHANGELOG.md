@@ -1,5 +1,13 @@
 # Registro de cambios
 
+## 2026-10-08
+
+### Añadido
+
+- Selectores dependientes de estado, municipio y parroquia al registrar o editar una sede, con validación de las relaciones también en el servidor.
+- Campos de estado y parroquia para las sedes; las ubicaciones históricas sin estado se mantienen editables sin alterar municipio.
+- Catálogo territorial venezolano con atribución a Edutherz y pruebas para validar su jerarquía y municipios sin parroquias cargadas.
+
 ## 2026-09-30
 
 ### Añadido
@@ -17,7 +25,7 @@
 ### Verificado
 
 - `php artisan test --filter=OperationFormsTest`: 3 pruebas aprobadas y 43 aserciones.
-- La tabla `roles` de la base `red_atencion` contiene cinco roles: Médico, Enfermero, Voluntario, Coordinador y Paramédico.
+- Los roles disponibles en el selector de personal se administran desde los registros de la tabla `roles`; no hay opciones predeterminadas.
 - El archivo `.env` local está excluido de Git.
 
 ### Alcance pendiente

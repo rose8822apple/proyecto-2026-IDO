@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\OperationController;
+use App\Http\Controllers\RoleController;
 use App\Models\Availability;
 use App\Models\AuditLog;
 use App\Models\Person;
@@ -24,6 +25,10 @@ Route::post('/notificaciones/vistas', function (Request $request) {
 
     return response()->noContent();
 })->name('notifications.read');
+
+Route::get('/roles', [RoleController::class, 'index'])->name('roles');
+Route::post('/roles', [RoleController::class, 'store'])->name('roles.store');
+Route::delete('/roles/{role}', [RoleController::class, 'destroy'])->whereNumber('role')->name('roles.destroy');
 
 Route::get('/auditoria', function (Request $request) {
     $entityClasses = [
@@ -87,15 +92,7 @@ Route::get('/auditoria', function (Request $request) {
 })->name('audit');
 
 Route::get('/dashboard', function () {
-    $people = Person::query()->with('availabilities')->get();
-    $personStatuses = $people->map(function ($person) {
-        return $person->availabilities()->latest('updated_at')->value('status') ?? $person->status ?? 'Sin disponibilidad';
-    });
-
-    $peopleCount = $people->count();
-    $operationalPeople = $personStatuses->filter(fn ($status) => $status === 'Disponible')->count();
-    $peopleOnShift = $personStatuses->filter(fn ($status) => in_array($status, ['Asignado', 'En turno'], true))->count();
-    $unavailablePeople = $personStatuses->filter(fn ($status) => in_array($status, ['No disponible', 'Horario específico', 'Inactivo'], true))->count();
+    $peopleCount = Person::count();
     $sitesCount = Site::count();
     $operationalSites = Site::where('status', 'Operativa')->count();
     $sitesInReview = Site::where('status', 'En revisión')->count();
@@ -106,9 +103,6 @@ Route::get('/dashboard', function () {
     return view('dashboard', [
         'title' => 'Resumen',
         'peopleCount' => $peopleCount,
-        'operationalPeople' => $operationalPeople,
-        'peopleOnShift' => $peopleOnShift,
-        'unavailablePeople' => $unavailablePeople,
         'sitesCount' => $sitesCount,
         'operationalSites' => $operationalSites,
         'sitesInReview' => $sitesInReview,
@@ -189,7 +183,8 @@ Route::get('/sedes', function () {
         return [
             '<strong>' . e($site->name) . '</strong><small class="table-subtext">' . e($site->type) . '</small>',
             '<span class="role-chip ' . ($site->type === 'Hospital' ? 'hospital' : 'shelter') . '">' . e($site->type) . '</span>',
-            $site->municipality,
+            '<strong>' . e($site->municipality) . '</strong><small class="table-subtext">'
+                . e(implode(' · ', array_filter([$site->parish, $site->state]))) . '</small>',
             '<span class="tag ' . ($site->status === 'Operativa' ? 'tag-green' : ($site->status === 'En revisión' ? 'tag-yellow' : 'tag-red')) . '">' . e($site->status) . '</span>',
             '<div class="table-actions"><a class="btn btn-secondary btn-small" href="' . route('sites.edit', $site) . '">Editar</a><form action="' . route('sites.destroy', $site) . '" method="POST" onsubmit="return confirm(\'¿Eliminar esta sede?\');" style="display:inline;">' . csrf_field() . method_field('DELETE') . '<button type="submit" class="btn btn-danger btn-small">Eliminar</button></form></div>',
         ];
@@ -202,7 +197,7 @@ Route::get('/sedes', function () {
         'action' => 'Registrar sede',
         'actionRoute' => 'sites.create',
         'panelTitle' => 'Sedes de la red',
-        'columns' => ['Sede', 'Tipo', 'Municipio', 'Estado', 'Acciones'],
+        'columns' => ['Sede', 'Tipo', 'Ubicación', 'Estado', 'Acciones'],
         'rows' => $rows,
     ]);
 })->name('sites');

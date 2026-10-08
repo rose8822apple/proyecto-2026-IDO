@@ -10,7 +10,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-    @vite(['resources/css/app.css', 'resources/js/app.js'])
+    @vite(['resources/css/app.css', 'resources/css/dashboard.css', 'resources/css/readability.css', 'resources/js/app.js'])
 </head>
 <body data-debug="{{ config('app.debug') ? 'true' : 'false' }}">
 <div id="toast-container" class="toast-container" aria-live="polite" aria-atomic="true"></div>
@@ -25,6 +25,7 @@
             <a class="nav-link {{ request()->routeIs('dashboard') ? 'active' : '' }}" href="{{ route('dashboard') }}"><i class="bi bi-grid-1x2-fill"></i> Resumen</a>
             <a class="nav-link {{ request()->routeIs('shifts') ? 'active' : '' }}" href="{{ route('shifts') }}"><i class="bi bi-calendar3"></i> Turnos</a>
             <a class="nav-link {{ request()->routeIs('people') ? 'active' : '' }}" href="{{ route('people') }}"><i class="bi bi-people-fill"></i> Personal</a>
+            <a class="nav-link {{ request()->routeIs('roles*') ? 'active' : '' }}" href="{{ route('roles') }}"><i class="bi bi-person-badge"></i> Roles</a>
             <a class="nav-link {{ request()->routeIs('sites') ? 'active' : '' }}" href="{{ route('sites') }}"><i class="bi bi-hospital-fill"></i> Sedes activas</a>
             <a class="nav-link {{ request()->routeIs('availability') ? 'active' : '' }}" href="{{ route('availability') }}"><i class="bi bi-clock-history"></i> Disponibilidad</a>
             <a class="nav-link {{ request()->routeIs('audit') ? 'active' : '' }}" href="{{ route('audit') }}"><i class="bi bi-journal-text"></i> Auditoría</a>
@@ -68,10 +69,33 @@
                     </div>
                 </div>
                 <div class="topbar-divider"></div>
-                <time class="topbar-date" datetime="{{ now('America/Caracas')->toDateString() }}"><i class="bi bi-calendar3"></i> {{ ucfirst(now('America/Caracas')->locale('es')->translatedFormat('l, j \\d\\e F')) }}</time>
+                <div class="d-flex flex-column align-items-end gap-1">
+                    <time class="topbar-date" datetime="{{ now('America/Caracas')->toDateString() }}"><i class="bi bi-calendar3"></i> {{ ucfirst(now('America/Caracas')->locale('es')->translatedFormat('l, j \\d\\e F')) }}</time>
+                    <time class="topbar-date" data-live-clock datetime="{{ now('America/Caracas')->toIso8601String() }}">
+                        <i class="bi bi-clock" aria-hidden="true"></i>
+                        <span>{{ now('America/Caracas')->format('H:i:s') }}</span>
+                    </time>
+                </div>
             </div>
         </header>
         <div class="page-container">@yield('content')</div>
+        <footer class="site-footer">
+            <p class="site-footer-copyright">© {{ now('America/Caracas')->year }} Instituto universitario jesus obrero IUJO CARACAS, Grupo 2 Investigacion de operaciones AC</p>
+            <nav class="site-footer-links" aria-label="Redes sociales y repositorio del proyecto">
+                <a href="https://www.instagram.com/" target="_blank" rel="noopener noreferrer" aria-label="Instagram">
+                    <i class="bi bi-instagram" aria-hidden="true"></i>
+                </a>
+                <a href="https://www.facebook.com/" target="_blank" rel="noopener noreferrer" aria-label="Facebook">
+                    <i class="bi bi-facebook" aria-hidden="true"></i>
+                </a>
+                <a href="https://x.com/" target="_blank" rel="noopener noreferrer" aria-label="X">
+                    <i class="bi bi-twitter-x" aria-hidden="true"></i>
+                </a>
+                <a href="https://github.com/rose8822apple/proyecto-2026-IDO" target="_blank" rel="noopener noreferrer" aria-label="Repositorio de RedSalud en GitHub">
+                    <i class="bi bi-github" aria-hidden="true"></i>
+                </a>
+            </nav>
+        </footer>
     </main>
 </div>
 </body>
