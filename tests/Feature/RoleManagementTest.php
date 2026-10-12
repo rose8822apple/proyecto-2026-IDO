@@ -3,6 +3,7 @@
 namespace Tests\Feature;
 
 use App\Models\Person;
+use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\DB;
 use Tests\TestCase;
@@ -10,6 +11,13 @@ use Tests\TestCase;
 class RoleManagementTest extends TestCase
 {
     use RefreshDatabase;
+
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        $this->actingAs(User::query()->where('email', 'admin@redsalud.local')->firstOrFail());
+    }
 
     public function test_roles_start_empty_and_empty_role_selector_has_no_options(): void
     {

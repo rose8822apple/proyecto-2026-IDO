@@ -1,0 +1,16 @@
+.login-page{min-height:100vh;display:grid;place-items:center;padding:24px;background:linear-gradient(135deg,#fff 0%,#f8f9fb 55%,#fff0ef 100%)}
+.login-card{width:min(100%,420px);padding:40px;background:#fff;border:1px solid var(--line);border-radius:14px;box-shadow:0 18px 55px #24344712}
+.login-brand{display:inline-flex;align-items:center;gap:10px;color:var(--navy);font:700 23px 'Space Grotesk';letter-spacing:-.7px}
+.login-brand .brand-mark{width:34px;height:34px;border-radius:9px;background:var(--red);color:#fff}
+.login-eyebrow{margin:34px 0 8px;color:var(--red);font-size:10px;font-weight:700;letter-spacing:1.4px}
+.login-card h1{font-size:29px}
+.login-description{margin:8px 0 26px;color:var(--muted)}
+.login-form{display:grid;gap:10px}
+.login-form label{margin-top:7px;font-weight:700;font-size:12px}
+.login-form input{width:100%;padding:12px;border:1px solid var(--line);border-radius:7px;font:inherit}
+.login-form input:focus{outline:2px solid #d9434333;border-color:var(--red)}
+.login-form button{margin-top:12px;padding:12px;border:0;border-radius:7px;background:var(--red);color:#fff;font:700 14px 'DM Sans';cursor:pointer}
+.login-form button:hover{background:#bd3538}
+.login-error{margin-bottom:18px;padding:11px 13px;border:1px solid #f3caca;border-radius:7px;background:#fff0f0;color:#a92c30}
+.login-hint{margin:22px 0 0;color:var(--muted);font-size:11px;text-align:center}
+@media(max-width:480px){.login-card{padding:30px 24px}}

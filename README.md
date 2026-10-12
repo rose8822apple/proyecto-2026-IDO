@@ -72,10 +72,14 @@ Aplicación Laravel 12 para administrar personal, sedes, turnos y disponibilidad
 1. Instala dependencias con `composer install` y `npm install`.
 2. Copia `.env.example` como `.env` y genera la clave con `php artisan key:generate`.
 3. Configura `DB_CONNECTION=mysql`, `DB_HOST`, `DB_PORT`, `DB_DATABASE`, `DB_USERNAME` y `DB_PASSWORD` en `.env`.
-4. En una base de datos nueva, ejecuta `php artisan migrate` para crear las tablas del proyecto, incluida `roles`, que comienza vacía. Administra las opciones desde **Roles** en el menú: solo los registros guardados allí aparecen en el selector de personal. Los roles que ya estén asignados a personas no se pueden eliminar hasta que dejen de usarse. Si conectas una base existente, revisa primero las tablas y el historial de migraciones; no vuelvas a crear tablas que ya existan.
+4. En una base de datos nueva, ejecuta `php artisan migrate` para crear las tablas del proyecto, incluida `roles`, que comienza vacía, y el usuario inicial de acceso. Administra las opciones desde **Roles** en el menú: solo los registros guardados allí aparecen en el selector de personal. Los roles que ya estén asignados a personas no se pueden eliminar hasta que dejen de usarse. Si conectas una base existente, revisa primero las tablas y el historial de migraciones; no vuelvas a crear tablas que ya existan.
 5. Inicia el servidor con `php artisan serve` y Vite, en otra terminal, con `npm run dev`. Abre `http://127.0.0.1:8000`.
 
 En XAMPP, si PHP no está en el `PATH`, ejecuta los comandos Artisan con `C:\xampp\php\php.exe`. Si la base de datos usa otra estructura existente, respalda la base y verifica las migraciones antes de ejecutarlas.
+
+### Acceso
+
+Todas las páginas del sistema requieren iniciar sesión. Después de ejecutar las migraciones, usa `admin` como usuario y `admin` como contraseña. Estas credenciales son solo para desarrollo local; cambia la contraseña antes de exponer la aplicación a otras personas o a Internet.
 
 ### Funciones implementadas
 

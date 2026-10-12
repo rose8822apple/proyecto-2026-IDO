@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\OperationController;
 use App\Http\Controllers\RoleController;
+use App\Http\Controllers\Auth\AuthenticatedSessionController;
 use App\Models\Availability;
 use App\Models\AuditLog;
 use App\Models\Person;
@@ -11,6 +12,14 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Validation\Rule;
 
+Route::middleware('guest')->group(function (): void {
+    Route::get('/login', [AuthenticatedSessionController::class, 'create'])->name('login');
+    Route::post('/login', [AuthenticatedSessionController::class, 'store'])->middleware('throttle:5,1')->name('login.store');
+});
+
+Route::post('/logout', [AuthenticatedSessionController::class, 'destroy'])->middleware('auth')->name('logout');
+
+Route::middleware('auth')->group(function (): void {
 Route::get('/', function () {
     return redirect()->route('dashboard');
 })->name('home');
@@ -239,3 +248,4 @@ Route::get('/disponibilidad/{availability}/editar', [OperationController::class,
 Route::post('/disponibilidad', [OperationController::class, 'storeAvailability'])->name('availability.store');
 Route::put('/disponibilidad/{availability}', [OperationController::class, 'updateAvailability'])->name('availability.update');
 Route::delete('/disponibilidad/{availability}', [OperationController::class, 'destroyAvailability'])->name('availability.destroy');
+});

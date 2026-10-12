@@ -30,7 +30,7 @@
             <a class="nav-link {{ request()->routeIs('availability') ? 'active' : '' }}" href="{{ route('availability') }}"><i class="bi bi-clock-history"></i> Disponibilidad</a>
             <a class="nav-link {{ request()->routeIs('audit') ? 'active' : '' }}" href="{{ route('audit') }}"><i class="bi bi-journal-text"></i> Auditoría</a>
         </nav>
-        <div class="sidebar-footer"><div class="profile-mini"><span class="avatar">AC</span><span><strong>Anderson Crespo</strong><small>Coordinación general</small></span></div></div>
+        <div class="sidebar-footer"><div class="profile-mini"><span class="avatar">{{ strtoupper(substr(auth()->user()->name, 0, 2)) }}</span><span><strong>{{ auth()->user()->name }}</strong><small>Sesión activa</small></span></div></div>
     </aside>
     <main class="main-content">
         <header class="topbar">
@@ -76,6 +76,10 @@
                         <span>{{ now('America/Caracas')->format('H:i:s') }}</span>
                     </time>
                 </div>
+                <form method="POST" action="{{ route('logout') }}">
+                    @csrf
+                    <button class="btn btn-secondary btn-small" type="submit">Cerrar sesión</button>
+                </form>
             </div>
         </header>
         <div class="page-container">@yield('content')</div>

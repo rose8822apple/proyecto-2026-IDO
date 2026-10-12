@@ -7,6 +7,7 @@ use App\Models\Availability;
 use App\Models\Person;
 use App\Models\Shift;
 use App\Models\Site;
+use App\Models\User;
 use App\Services\AuditLogger;
 use App\Support\VenezuelaTerritory;
 use Illuminate\Database\Schema\Blueprint;
@@ -32,6 +33,32 @@ class OperationFormsTest extends TestCase
         }
 
         DB::table('roles')->delete();
+        $this->actingAs(User::query()->where('email', 'admin@redsalud.local')->firstOrFail());
+    }
+
+    public function test_person_status_migration_repairs_existing_schema_before_person_creation(): void
+    {
+        DB::table('roles')->insert(['nombre' => 'Médico']);
+        Schema::table('people', function (Blueprint $table): void {
+            $table->dropColumn('status');
+        });
+
+        $migration = require database_path('migrations/2026_10_07_000009_add_status_to_people_table.php');
+        $migration->up();
+        $migration->up();
+
+        $this->assertTrue(Schema::hasColumn('people', 'status'));
+
+        $this->post('/personal', [
+            'name' => 'Ana García',
+            'email' => 'ana@example.com',
+            'role' => 'Médico',
+        ])->assertRedirect('/personal');
+
+        $this->assertDatabaseHas('people', [
+            'email' => 'ana@example.com',
+            'status' => 'Disponible',
+        ]);
     }
 
     public function test_forms_hide_coverage_and_operations_can_be_saved_without_it(): void
@@ -940,7 +967,7 @@ class OperationFormsTest extends TestCase
         ], $entry->new_values);
         $this->assertArrayNotHasKey('cedula', $entry->new_values);
         $this->assertNull($entry->old_values);
-        $this->assertNull($entry->actor_id);
+        $this->assertSame(auth()->id(), $entry->actor_id);
         $this->assertDatabaseHas('audit_logs', ['id' => $entry->id, 'event' => 'created']);
     }
 
@@ -982,7 +1009,7 @@ class OperationFormsTest extends TestCase
             ->assertSee('Edición')
             ->assertSee('Ana García Ruiz')
             ->assertSee('En turno')
-            ->assertSee('Sin identificar');
+            ->assertSee('Administrador');
 
         $this->delete('/personal/'.$person->id)->assertRedirect('/personal');
         $this->assertDatabaseHas('audit_logs', [
